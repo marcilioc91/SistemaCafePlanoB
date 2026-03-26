@@ -1,0 +1,18 @@
+<h2>Venda</h2>
+
+<h3>Produtos</h3>
+<ul>
+  <li *ngFor="let p of produtos">
+    {{p.nome}}
+    <button (click)="adicionar(p)">Adicionar</button>
+  </li>
+</ul>
+
+<h3>Itens</h3>
+<ul>
+  <li *ngFor="let i of itens">
+    Produto ID: {{i.produtoId}} - Qtd: {{i.quantidade}}
+  </li>
+</ul>
+
+<button (click)="finalizar()">Finalizar Venda</button>
