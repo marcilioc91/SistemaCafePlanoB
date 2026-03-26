@@ -9,7 +9,7 @@ Sistema web para gerenciamento de vendas de cantina, com controle de clientes, p
 | Camada | Tecnologia |
 |---|---|
 | Frontend | Angular |
-| Backend | Java 21 + Spring Boot |
+| Backend | Java 25 + Spring Boot |
 | ORM | Spring Data JPA + Hibernate |
 | Banco de dados | SQL Server |
 | Build | Maven |
@@ -96,47 +96,6 @@ src/app/
 
 ---
 
-## ⚙️ Configuração
-
-### Banco de dados
-
-No arquivo `src/main/resources/application.properties`:
-
-```properties
-spring.datasource.url=jdbc:sqlserver://localhost:1433;databaseName=sistemavendas
-spring.datasource.username=sa
-spring.datasource.password=123456
-
-spring.jpa.hibernate.ddl-auto=none
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.SQLServerDialect
-```
-
-### Dependências Maven (pom.xml)
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-web</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>com.microsoft.sqlserver</groupId>
-        <artifactId>mssql-jdbc</artifactId>
-        <scope>runtime</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-    </dependency>
-</dependencies>
-```
-
----
 
 ## 🔗 Endpoints da API
 
@@ -162,61 +121,7 @@ O registro de uma venda segue as etapas abaixo:
 4. Calcular total
 5. Salvar venda
 
-O frontend envia o seguinte payload para o backend:
-
-```json
-{
-  "clienteId": 1,
-  "usuarioCpf": "12345678900",
-  "produtos": [
-    {
-      "produtoId": 1,
-      "quantidade": 2
-    }
-  ]
-}
-```
-
-O backend então:
-
-1. Cria o registro na tabela `VENDA`
-2. Cria os registros na tabela `VENDA_PRODUTO`
-3. Baixa o estoque dos produtos vendidos
-
----
-
-## 🗃️ Modelo de Dados
-
-| Tabela | Campos principais |
-|---|---|
-| `CLIENTE` | id, nome, cpf, telefone, obs |
-| `PRODUTO` | id, nome, preco, estoque |
-| `USUARIO` | cpf, nome, email, senha, dataCriacao |
-| `VENDA` | id, cliente_id, usuario_cpf, dataVenda |
-| `VENDA_PRODUTO` | id, venda_id, produto_id, quantidade, precoUnitario |
-
----
-
-## 🚀 Como executar
-
-### Backend
-
-```bash
-# Na pasta /backend
-mvn spring-boot:run
-```
-
-A API ficará disponível em `http://localhost:8080`.
-
-### Frontend
-
-```bash
-# Na pasta /frontend
-npm install
-ng serve
-```
-
-A aplicação ficará disponível em `http://localhost:4200`.
+O frontend envia o payload para o backend, e o mesmo cria o registro de vendas e baixa o estoque dos itens vendidos.
 
 ---
 
