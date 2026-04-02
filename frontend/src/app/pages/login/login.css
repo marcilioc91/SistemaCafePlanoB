@@ -1,0 +1,43 @@
+:host {
+    height: 100vh;
+    display: flex;
+
+    background:
+        linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+        url('../../../assets/LoginArt.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.login-container {
+    height: auto;
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 32px;
+    border-radius: 12px;
+    text-align: center;
+
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.full-width {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.cadastro-link {
+    color: #8A1189;
+}
+
+h2 {
+    margin-bottom: 30px;
+}
