@@ -1,0 +1,40 @@
+<div class="cadastro-container">
+    <h2>Cadastro</h2>
+
+    <form>
+        <mat-form-field class="full-width">
+            <mat-label>CPF</mat-label>
+            <input matInput [(ngModel)]="usuario.cpf" name="cpf" mask="000.000.000-00">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-label>Email</mat-label>
+            <input matInput [(ngModel)]="usuario.email" name="email">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-label>Quarto</mat-label>
+            <input matInput [(ngModel)]="usuario.quarto" name="quarto">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-label>Usuário</mat-label>
+            <input matInput [(ngModel)]="usuario.usuario" name="usuario">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-label>Senha</mat-label>
+            <input matInput [(ngModel)]="usuario.senha" name="senha" type="password">
+        </mat-form-field>
+
+        <mat-form-field class="full-width">
+            <mat-label>Observações</mat-label>
+            <input matInput [(ngModel)]="usuario.obs" name="obs">
+        </mat-form-field>
+
+        <div class="buttons">
+            <button mat-raised-button color="primary" (click)="salvar()">Salvar</button>
+            <button mat-button (click)="fechar()">Cancelar</button>
+        </div>
+    </form>
+</div>

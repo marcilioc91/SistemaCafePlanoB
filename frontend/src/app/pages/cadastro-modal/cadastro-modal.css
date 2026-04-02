@@ -1,0 +1,25 @@
+:host{
+    display: flex;
+}
+
+.cadastro-container {
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    padding: 32px;
+    border-radius: 12px;
+    text-align: center;
+
+    backdrop-filter: blur(12px);
+    background: rgba(255, 255, 255, 0.85);
+}
+
+.buttons {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.full-width {
+    width: 100%;
+    border-radius: 50px;
+}
