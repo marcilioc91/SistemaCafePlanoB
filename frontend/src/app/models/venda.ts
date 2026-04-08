@@ -1,10 +1,10 @@
 export interface VendaProduto {
-  produtoId: number
-  quantidade: number
+  produtoId: number;
+  quantidade: number;
 }
 
 export interface Venda {
-  clienteId: number
-  usuarioCpf: string
-  produtos: VendaProduto[]
+  clienteId: number;
+  usuarioId: number;
+  produtos: VendaProduto[];
 }

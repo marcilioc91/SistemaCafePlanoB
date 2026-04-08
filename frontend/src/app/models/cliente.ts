@@ -1,7 +1,7 @@
+import { Pessoa } from './usuario';
+
 export interface Cliente {
-  id: number;
-  nome: string;
-  cpf: string;
-  telefone: string;
-  obs: string;
+  id?: number;
+  pessoa: Pessoa;
+  obs?: string;
 }

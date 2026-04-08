@@ -34,7 +34,7 @@ export class Vendas implements OnInit {
   finalizar(){
     const venda = {
       clienteId: 1,
-      usuarioCpf: "123",
+      usuarioId: 1,
       produtos: this.itens
     }
 

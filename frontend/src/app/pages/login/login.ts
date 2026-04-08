@@ -32,16 +32,14 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class Login {
   conta = {
-    cpf: "",
-    email: "",
-    usuario: "",
-    senha: ""
+    login: '',
+    senha: ''
   }
 
   constructor(private auth: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar) { }
 
   login() {
-    if (!this.conta.cpf || !this.conta.email || !this.conta.senha) {
+    if (!this.conta.login || !this.conta.senha) {
       console.error("Preencha todos os campos para realizar o login.");
       return;
     }

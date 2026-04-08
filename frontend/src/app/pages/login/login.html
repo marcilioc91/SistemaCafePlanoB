@@ -6,7 +6,7 @@
 
         <mat-form-field class="full-width">
             <mat-label>Usuário</mat-label>
-            <input matInput [(ngModel)]="conta.usuario" name="conta" type="text">
+            <input matInput [(ngModel)]="conta.login" name="login" type="text">
         </mat-form-field>
 
         <mat-form-field class="full-width">
@@ -21,7 +21,7 @@
         </mat-form-field>
 
         <button mat-raised-button color="primary" class="full-width" (click)="login()"
-            [disabled]="!conta.usuario || !conta.senha">
+            [disabled]="!conta.login || !conta.senha">
             Entrar
         </button>
 

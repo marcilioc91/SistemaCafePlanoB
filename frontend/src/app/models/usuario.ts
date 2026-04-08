@@ -1,5 +1,19 @@
+export interface Pessoa {
+  id?: number;
+  nome: string;
+  cpf: string;
+  telefone?: string;
+}
+
 export interface Usuario {
-  cpf: string
-  email: string
-  senha: string
+  id?: number;
+  pessoa?: Pessoa;
+  usuarioLogin: string;
+  email: string;
+  senha?: string;
+}
+
+export interface LoginRequest {
+  login: string;
+  senha: string;
 }
