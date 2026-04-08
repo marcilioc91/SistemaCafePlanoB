@@ -1,0 +1,77 @@
+<div class="cadastro-container">
+    <h2>Cadastro</h2>
+
+    <form class="cadastro-form">
+
+
+        @if (step === 0) {
+        <div>
+            <h5>Tela {{ step + 1 }} de 2 </h5>
+            <mat-form-field class="full-width">
+                <mat-label>Nome Completo</mat-label>
+                <input matInput [(ngModel)]="conta.nome" name="nome">
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <mat-label>CPF</mat-label>
+                <input matInput [(ngModel)]="conta.cpf" name="cpf" mask="000.000.000-00">
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput [(ngModel)]="conta.email" name="email">
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <mat-label>Quarto</mat-label>
+                <input matInput [(ngModel)]="conta.quarto" name="quarto">
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <mat-label>Observações</mat-label>
+                <input matInput [(ngModel)]="conta.obs" name="obs">
+            </mat-form-field>
+
+            <button type="button" mat-raised-button color="primary" (click)="nextStep()"
+                [disabled]="!conta.nome || !conta.cpf || !conta.email">
+                Próximo
+            </button>
+
+            <button mat-button (click)="fechar()">Cancelar</button>
+        </div>
+        }
+
+        @if (step === 1) {
+        <div>
+            <h5>Tela {{ step + 1 }} de 2 </h5>
+            <mat-form-field class="full-width">
+                <mat-label>Login</mat-label>
+                <input matInput [(ngModel)]="conta.usuario" name="usuario">
+            </mat-form-field>
+
+            <mat-form-field class="full-width">
+                <mat-label>Senha</mat-label>
+
+                <input matInput [(ngModel)]="conta.senha" name="senha" [type]="hide ? 'password' : 'text'">
+
+                <button mat-icon-button matSuffix type="button" (click)="togglePassword()"
+                    [attr.aria-label]="'Mostrar ou ocultar senha'" [attr.aria-pressed]="hide">
+                    <mat-icon>{{ hide ? 'visibility_off' : 'visibility' }}</mat-icon>
+                </button>
+
+            </mat-form-field>
+
+            <button type="button" mat-raised-button color="primary" (click)="prevStep()">
+                Voltar
+            </button>
+
+            <button mat-raised-button color="primary" (click)="salvar()"
+                [disabled]="!conta.usuario || !conta.senha">
+                Concluir
+            </button>
+
+        </div>
+        }
+
+    </form>
+</div>
