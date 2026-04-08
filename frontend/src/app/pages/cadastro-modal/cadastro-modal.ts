@@ -1,10 +1,12 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
+import { MatIcon } from "@angular/material/icon";
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-cadastro-modal',
@@ -14,14 +16,18 @@ import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    NgxMaskDirective
-  ],
+    NgxMaskDirective,
+    MatIcon,
+    CommonModule
+],
   providers: [provideNgxMask()],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './cadastro-modal.html',
   styleUrl: './cadastro-modal.css',
 })
 export class CadastroModal {
-    usuario = {
+    conta = {
+      nome: '',
       cpf: '',
       email: '',
       usuario: '',
@@ -33,10 +39,26 @@ export class CadastroModal {
 
   salvar() {
     // Aqui você pode adicionar a lógica para salvar os dados do usuário
-    this.dialogRef.close(this.usuario);
+    this.dialogRef.close(this.conta);
   }
 
   fechar() {
     this.dialogRef.close();
+  }
+
+  hide = true;
+
+  togglePassword() {
+    this.hide = !this.hide;
+  }
+
+  step = 0;
+
+  nextStep() {
+    this.step = 1;
+  }
+
+  prevStep() {
+    this.step = 0;
   }
 }
