@@ -35,5 +35,4 @@ build/
 ### Arquivos do projeto ignorados ###
 backend/src/main/resources/*.properties
 *.zip
-Estruturacao.md
-Modificacoes.md
+Annotations
