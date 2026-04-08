@@ -3,17 +3,15 @@ package com.sistemacafeplanob.backend.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 @Entity
-@Table(name="PRODUTO")
+@Table(name = "PESSOA")
 @Data
-
-public class Produto {
+public class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
     private String nome;
-    private BigDecimal preco;
-    private Integer estoque;
+    @Column(unique = true, nullable = false)
+    private String cpf;
+    private String telefone;
 }

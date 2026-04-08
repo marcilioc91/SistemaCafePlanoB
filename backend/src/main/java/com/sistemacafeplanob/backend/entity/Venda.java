@@ -1,21 +1,31 @@
 package com.sistemacafeplanob.backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="VENDA")
 @Data
 public class Venda {
     @Id
-    private Integer id;
-    private Integer cliente_id;
-    private String usuario_cpf;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "CLIENTE_ID", nullable = false)
+    private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "USUARIO_ID", nullable = false)
+    private Usuario usuario;
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
+    private List<VendaItem> itens;
+
     @CreationTimestamp
     private LocalDateTime data_venda;
 }

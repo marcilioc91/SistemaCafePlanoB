@@ -1,8 +1,6 @@
 package com.sistemacafeplanob.backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -10,9 +8,10 @@ import lombok.Data;
 @Data
 public class Cliente {
     @Id
-    private Integer id;
-    private String nome;
-    private String cpf;
-    private String telefone;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @OneToOne
+    @JoinColumn(name = "PESSOA_ID", nullable = false, unique = true)
+    private Pessoa pessoa;
     private String obs;
 }

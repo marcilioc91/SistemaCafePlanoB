@@ -1,8 +1,6 @@
 package com.sistemacafeplanob.backend.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -13,8 +11,12 @@ import java.time.LocalDateTime;
 @Data
 public class Usuario {
     @Id
-    private String cpf;
-    private String nome;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @OneToOne
+    @JoinColumn(name = "PESSOA_ID", nullable = false, unique = true)
+    private Pessoa pessoa;
+    @Column(unique = true, nullable = false)
     private String email;
     private String senha;
     @CreationTimestamp

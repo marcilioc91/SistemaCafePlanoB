@@ -4,7 +4,7 @@ import com.sistemacafeplanob.backend.dto.VendaRequestDTO;
 import com.sistemacafeplanob.backend.dto.VendaProdutoRequestDTO;
 import com.sistemacafeplanob.backend.entity.Produto;
 import com.sistemacafeplanob.backend.entity.Venda;
-import com.sistemacafeplanob.backend.entity.VendaProduto;
+import com.sistemacafeplanob.backend.entity.VendaItem;
 import com.sistemacafeplanob.backend.repository.ProdutoRepository;
 import com.sistemacafeplanob.backend.repository.VendaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class VendaService {
             Produto produto = produtoRepository.findById(item.getProdutoId())
                     .orElseThrow(() -> new RuntimeException("Produto não encontrado: " + item.getProdutoId()));
 
-            VendaProduto vp = new VendaProduto();
+            VendaItem vp = new VendaItem();
             vp.setVenda_id(venda.getId());
             vp.setProduto_id(item.getProdutoId());
             vp.setQuantidade(item.getQuantidade());
