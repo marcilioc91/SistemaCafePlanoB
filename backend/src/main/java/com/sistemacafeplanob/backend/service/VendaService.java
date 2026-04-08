@@ -2,7 +2,9 @@ package com.sistemacafeplanob.backend.service;
 
 import com.sistemacafeplanob.backend.dto.VendaRequestDTO;
 import com.sistemacafeplanob.backend.dto.VendaProdutoRequestDTO;
+import com.sistemacafeplanob.backend.entity.Cliente;
 import com.sistemacafeplanob.backend.entity.Produto;
+import com.sistemacafeplanob.backend.entity.Usuario;
 import com.sistemacafeplanob.backend.entity.Venda;
 import com.sistemacafeplanob.backend.entity.VendaItem;
 import com.sistemacafeplanob.backend.repository.ProdutoRepository;
@@ -27,8 +29,8 @@ public class VendaService {
     @Transactional
     public Venda realizarVenda(VendaRequestDTO dto) {
         Venda venda = new Venda();
-        venda.setCliente_id(dto.getClienteId());
-        venda.setUsuario_cpf(dto.getUsuarioCpf());
+        venda.setCliente(entityManager.getReference(Cliente.class, dto.getClienteId()));
+        venda.setUsuario(entityManager.getReference(Usuario.class, dto.getUsuarioId()));
 
         venda = vendaRepository.save(venda);
 
@@ -37,10 +39,10 @@ public class VendaService {
                     .orElseThrow(() -> new RuntimeException("Produto não encontrado: " + item.getProdutoId()));
 
             VendaItem vp = new VendaItem();
-            vp.setVenda_id(venda.getId());
-            vp.setProduto_id(item.getProdutoId());
+            vp.setVenda(venda);
+            vp.setProduto(produto);
             vp.setQuantidade(item.getQuantidade());
-            vp.setPreco_unitario(produto.getPreco());
+            vp.setPrecoUnitario(produto.getPreco());
 
             entityManager.persist(vp);
 

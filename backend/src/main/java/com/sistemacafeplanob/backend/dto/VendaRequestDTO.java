@@ -6,7 +6,7 @@ import java.util.List;
 
 @Data
 public class VendaRequestDTO {
-    private Integer clienteId;
-    private String usuarioCpf;
+    private Long clienteId;
+    private Long usuarioId;
     private List<VendaProdutoRequestDTO> produtos;
 }

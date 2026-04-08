@@ -10,10 +10,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository repository;
 
-    public Usuario autenticar(String cpf, String senha) {
-        return repository.findAll().stream()
-                .filter(u -> u.getCpf().equals(cpf) && u.getSenha().equals(senha))
-                .findFirst()
+    public Usuario autenticar(String login, String senha) {
+        return repository.findByUsuarioLogin(login)
+                .filter(u -> u.getSenha().equals(senha))
                 .orElse(null);
     }
 }
