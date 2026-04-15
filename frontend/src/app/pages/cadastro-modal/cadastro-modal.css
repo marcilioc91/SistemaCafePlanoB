@@ -25,3 +25,9 @@
     width: 100%;
     border-radius: 8px;
 }
+
+.erro-msg {
+    color: #d32f2f;
+    font-size: 0.85rem;
+    margin-top: 8px;
+}

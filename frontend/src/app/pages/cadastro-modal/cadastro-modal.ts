@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { MatIcon } from "@angular/material/icon";
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-cadastro-modal',
@@ -26,20 +27,34 @@ import { CommonModule } from '@angular/common';
   styleUrl: './cadastro-modal.css',
 })
 export class CadastroModal {
-    conta = {
-      nome: '',
-      cpf: '',
-      email: '',
-      usuario: '',
-      senha: '',
-      quarto: '',
-      obs: ''
+  conta = {
+    nome: '',
+    cpf: '',
+    email: '',
+    usuario: '',
+    senha: '',
+    quarto: '',
+    obs: ''
   }
-  constructor(private dialogRef: MatDialogRef<CadastroModal>) {}
+
+  erro = '';
+
+  constructor(private dialogRef: MatDialogRef<CadastroModal>, private auth: AuthService) {}
 
   salvar() {
-    // Aqui você pode adicionar a lógica para salvar os dados do usuário
-    this.dialogRef.close(this.conta);
+    this.auth.cadastrar({
+      nome: this.conta.nome,
+      cpf: this.conta.cpf,
+      email: this.conta.email,
+      usuario: this.conta.usuario,
+      senha: this.conta.senha,
+      obs: this.conta.obs || undefined
+    }).subscribe({
+      next: () => this.dialogRef.close(true),
+      error: (err) => {
+        this.erro = err.error ?? 'Erro ao realizar cadastro.';
+      }
+    });
   }
 
   fechar() {
