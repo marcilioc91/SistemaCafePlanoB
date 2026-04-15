@@ -22,6 +22,10 @@ export class Home {
     this.router.navigate(['/produto-form']);
   }
 
+  irParaNovaVenda() {
+    this.router.navigate(['/vendas']);
+  }
+
   irParaHistoricoVendas() {
     this.router.navigate(['/historico-vendas']);
   }
