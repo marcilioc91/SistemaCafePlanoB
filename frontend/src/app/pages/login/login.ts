@@ -7,7 +7,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CadastroModal } from '../cadastro-modal/cadastro-modal';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -36,16 +36,23 @@ export class Login {
     senha: ''
   }
 
-  constructor(private auth: AuthService, private dialog: MatDialog, private snackBar: MatSnackBar) { }
+  constructor(
+    private auth: AuthService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
+    private router: Router
+  ) { }
 
   login() {
     if (!this.conta.login || !this.conta.senha) {
-      console.error("Preencha todos os campos para realizar o login.");
       return;
     }
-    this.auth.login(this.conta).subscribe(res => {
-      console.log("Login realizado com sucesso!", res)
-    })
+    this.auth.login(this.conta).subscribe({
+      next: () => this.router.navigate(['/home']),
+      error: () => {
+        this.snackBar.open('Login ou senha inválidos.', 'Fechar', { duration: 3000 });
+      }
+    });
   }
 
   abrirCadastro() {
