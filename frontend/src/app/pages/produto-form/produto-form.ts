@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -75,7 +75,8 @@ export class ProdutoForm implements OnInit {
   constructor(
     private produtoService: ProdutoService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -85,6 +86,7 @@ export class ProdutoForm implements OnInit {
   carregar() {
     this.produtoService.listar().subscribe(dados => {
       this.produtos = dados;
+      this.cdr.detectChanges();
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -66,7 +66,7 @@ export class HistoricoClienteDialog implements OnInit {
     private dialogRef: MatDialogRef<HistoricoClienteDialog>,
     private vendaService: VendaService,
     @Inject(MAT_DIALOG_DATA) public data: { clienteId: number; nomeCliente: string }
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.vendaService.listarPorCliente(this.data.clienteId).subscribe(dados => {
@@ -104,8 +104,9 @@ export class Clientes implements OnInit {
   constructor(
     private clienteService: ClienteService,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
-  ) {}
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit() {
     this.carregar();
@@ -114,6 +115,7 @@ export class Clientes implements OnInit {
   carregar() {
     this.clienteService.listar().subscribe(dados => {
       this.clientes = dados;
+      this.cdr.detectChanges();
     });
   }
 
@@ -130,9 +132,13 @@ export class Clientes implements OnInit {
   }
 
   verCompras(cliente: Cliente) {
-    this.dialog.open(HistoricoClienteDialog, {
+    const ref = this.dialog.open(HistoricoClienteDialog, {
       width: '560px',
       data: { clienteId: cliente.id, nomeCliente: cliente.pessoa.nome }
+    });
+
+    ref.afterClosed().subscribe(() => {
+      this.carregar();
     });
   }
 
