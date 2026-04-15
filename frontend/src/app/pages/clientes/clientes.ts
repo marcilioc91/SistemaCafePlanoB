@@ -17,46 +17,7 @@ import { CadastroModal } from '../cadastro-modal/cadastro-modal';
   selector: 'app-historico-cliente-dialog',
   standalone: true,
   imports: [CommonModule, DatePipe, MatTableModule, MatButtonModule, MatExpansionModule],
-  template: `
-    <h2 style="padding: 24px 24px 0">Compras de {{ data.nomeCliente }}</h2>
-    <div style="padding: 0 24px 24px; min-width: 480px; max-height: 70vh; overflow-y: auto;">
-      @if (vendas.length === 0) {
-        <p style="color: #888; text-align:center; margin-top: 24px;">Nenhuma compra registrada.</p>
-      } @else {
-        <mat-accordion>
-          @for (venda of vendas; track venda.id) {
-            <mat-expansion-panel>
-              <mat-expansion-panel-header>
-                <mat-panel-title>Venda #{{ venda.id }}</mat-panel-title>
-                <mat-panel-description>
-                  {{ venda.data_venda | date:'dd/MM/yyyy HH:mm' }} — R$ {{ total(venda) | number:'1.2-2' }}
-                </mat-panel-description>
-              </mat-expansion-panel-header>
-              <table mat-table [dataSource]="venda.itens" style="width:100%">
-                <ng-container matColumnDef="produto">
-                  <th mat-header-cell *matHeaderCellDef>Produto</th>
-                  <td mat-cell *matCellDef="let i">{{ i.produto.nome }}</td>
-                </ng-container>
-                <ng-container matColumnDef="quantidade">
-                  <th mat-header-cell *matHeaderCellDef>Qtd.</th>
-                  <td mat-cell *matCellDef="let i">{{ i.quantidade }}</td>
-                </ng-container>
-                <ng-container matColumnDef="subtotal">
-                  <th mat-header-cell *matHeaderCellDef>Subtotal</th>
-                  <td mat-cell *matCellDef="let i">R$ {{ i.quantidade * i.precoUnitario | number:'1.2-2' }}</td>
-                </ng-container>
-                <tr mat-header-row *matHeaderRowDef="colunas"></tr>
-                <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
-              </table>
-            </mat-expansion-panel>
-          }
-        </mat-accordion>
-      }
-      <div style="margin-top:16px; text-align:right">
-        <button mat-button (click)="fechar()">Fechar</button>
-      </div>
-    </div>
-  `,
+  templateUrl: './historico-cliente-dialog.html',
 })
 export class HistoricoClienteDialog implements OnInit {
   vendas: VendaResposta[] = [];
@@ -113,9 +74,14 @@ export class Clientes implements OnInit {
   }
 
   carregar() {
-    this.clienteService.listar().subscribe(dados => {
-      this.clientes = dados;
-      this.cdr.detectChanges();
+    this.clienteService.listar().subscribe({
+      next: dados => {
+        this.clientes = dados;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.snackBar.open('Erro ao carregar clientes.', 'Fechar', { duration: 4000 });
+      }
     });
   }
 
