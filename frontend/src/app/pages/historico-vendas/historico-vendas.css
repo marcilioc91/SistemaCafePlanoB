@@ -1,32 +1,30 @@
-.produtos-container {
+.historico-container {
   padding: 32px;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
-.produtos-header {
+.historico-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 24px;
 }
 
-.header-acoes {
-  display: flex;
-  gap: 12px;
+.itens-tabela {
+  width: 100%;
+  margin-bottom: 12px;
 }
 
-.produtos-tabela {
-  width: 100%;
+.total-linha {
+  text-align: right;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #555;
 }
 
 .sem-dados {
   text-align: center;
   color: #888;
   margin-top: 40px;
-}
-
-.estoque-baixo {
-  color: #d32f2f;
-  font-weight: 600;
 }

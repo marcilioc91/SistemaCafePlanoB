@@ -22,4 +22,9 @@ public class ClienteController {
     public Cliente salvar(@RequestBody Cliente cliente) {
         return service.salvar(cliente);
     }
+
+    @DeleteMapping("/{id}")
+    public void excluir(@PathVariable Integer id) {
+        service.excluir(id);
+    }
 }

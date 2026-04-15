@@ -19,4 +19,8 @@ public class ClienteService {
     public Cliente salvar(Cliente cliente) {
         return repository.save(cliente);
     }
+
+    public void excluir(Integer id) {
+        repository.deleteById(id);
+    }
 }

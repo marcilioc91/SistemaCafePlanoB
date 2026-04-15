@@ -22,4 +22,9 @@ public class ProdutoController {
     public Produto salvar(@RequestBody Produto produto){
         return service.salvar(produto);
     }
+
+    @DeleteMapping("/{id}")
+    public void excluir(@PathVariable Long id) {
+        service.excluir(id);
+    }
 }

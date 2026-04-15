@@ -57,7 +57,8 @@ export class Login {
 
   abrirCadastro() {
     const dialogRef = this.dialog.open(CadastroModal, {
-      width: '400px'
+      width: '400px',
+      data: { modo: 'usuario' }
     });
 
     dialogRef.afterClosed().subscribe(result => {

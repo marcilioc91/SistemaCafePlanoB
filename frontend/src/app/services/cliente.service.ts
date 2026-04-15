@@ -17,4 +17,8 @@ export class ClienteService {
   salvar(cliente: Cliente) {
     return this.http.post<Cliente>(this.api, cliente)
   }
+
+  excluir(id: number) {
+    return this.http.delete(`${this.api}/${id}`)
+  }
 }

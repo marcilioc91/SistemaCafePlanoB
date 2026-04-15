@@ -19,4 +19,8 @@ public class ProdutoService {
     public Produto salvar(Produto produto){
         return repository.save(produto);
     }
+
+    public void excluir(Long id) {
+        repository.deleteById(id);
+    }
 }

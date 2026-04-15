@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Venda } from '../models/venda';
+import { Venda, VendaResposta } from '../models/venda';
 
 @Injectable({
   providedIn: 'root',
@@ -10,7 +10,15 @@ export class VendaService {
 
   constructor(private http: HttpClient) {}
 
-  realizarVenda(venda: Venda){
+  realizarVenda(venda: Venda) {
     return this.http.post(this.api, venda)
+  }
+
+  listarTodas() {
+    return this.http.get<VendaResposta[]>(this.api)
+  }
+
+  listarPorCliente(clienteId: number) {
+    return this.http.get<VendaResposta[]>(`${this.api}/cliente/${clienteId}`)
   }
 }

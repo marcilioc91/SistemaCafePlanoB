@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import jakarta.persistence.EntityManager;
 
 @Service
@@ -51,5 +53,13 @@ public class VendaService {
         }
 
         return venda;
+    }
+
+    public List<Venda> listarTodas() {
+        return vendaRepository.findAll();
+    }
+
+    public List<Venda> listarPorCliente(Long clienteId) {
+        return vendaRepository.findByClienteId(clienteId);
     }
 }

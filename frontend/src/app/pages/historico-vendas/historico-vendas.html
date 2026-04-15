@@ -1,0 +1,59 @@
+<div class="historico-container">
+  <div class="historico-header">
+    <h2>Histórico de Vendas</h2>
+    <button mat-stroked-button routerLink="/home">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+    </button>
+  </div>
+
+  @if (vendas.length === 0) {
+    <p class="sem-dados">Nenhuma venda registrada.</p>
+  } @else {
+    <mat-accordion>
+      @for (venda of vendas; track venda.id) {
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              Venda #{{ venda.id }} — {{ venda.cliente.pessoa.nome }}
+            </mat-panel-title>
+            <mat-panel-description>
+              {{ venda.data_venda | date:'dd/MM/yyyy HH:mm' }} &nbsp;|&nbsp;
+              Total: R$ {{ totalVenda(venda) | number:'1.2-2' }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <table mat-table [dataSource]="venda.itens" class="itens-tabela">
+
+            <ng-container matColumnDef="produto">
+              <th mat-header-cell *matHeaderCellDef>Produto</th>
+              <td mat-cell *matCellDef="let item">{{ item.produto.nome }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="quantidade">
+              <th mat-header-cell *matHeaderCellDef>Qtd.</th>
+              <td mat-cell *matCellDef="let item">{{ item.quantidade }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="precoUnitario">
+              <th mat-header-cell *matHeaderCellDef>Preço Unit.</th>
+              <td mat-cell *matCellDef="let item">R$ {{ item.precoUnitario | number:'1.2-2' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="subtotal">
+              <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+              <td mat-cell *matCellDef="let item">R$ {{ item.quantidade * item.precoUnitario | number:'1.2-2' }}</td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="colunasItens"></tr>
+            <tr mat-row *matRowDef="let row; columns: colunasItens;"></tr>
+          </table>
+
+          <p class="total-linha">
+            <strong>Atendido por:</strong> {{ venda.usuario.usuarioLogin }}
+          </p>
+        </mat-expansion-panel>
+      }
+    </mat-accordion>
+  }
+</div>

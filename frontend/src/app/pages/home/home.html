@@ -1,4 +1,11 @@
 <div class="home-container">
+  <div class="home-topbar">
+    <button mat-stroked-button color="warn" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      Sair
+    </button>
+  </div>
+
   <h2 class="home-titulo">O que deseja fazer?</h2>
 
   <div class="home-cards">
@@ -16,6 +23,14 @@
         <mat-icon class="home-icon">add_box</mat-icon>
         <h3>Cadastro de Produto</h3>
         <p>Adicionar um novo produto ao catálogo</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="home-card" (click)="irParaHistoricoVendas()">
+      <mat-card-content>
+        <mat-icon class="home-icon">receipt_long</mat-icon>
+        <h3>Histórico de Vendas</h3>
+        <p>Visualizar todas as vendas realizadas</p>
       </mat-card-content>
     </mat-card>
 

@@ -6,10 +6,11 @@ import { ProdutoForm } from './pages/produto-form/produto-form';
 import { Produtos } from './pages/produtos/produtos';
 import { Vendas } from './pages/vendas/vendas';
 import { Clientes } from './pages/clientes/clientes';
+import { HistoricoVendas } from './pages/historico-vendas/historico-vendas';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Login, Home, ProdutoForm, Produtos, Vendas, Clientes],
+  imports: [RouterOutlet, Login, Home, ProdutoForm, Produtos, Vendas, Clientes, HistoricoVendas],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

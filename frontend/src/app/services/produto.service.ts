@@ -1,19 +1,24 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Produto } from '../models/produto';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProdutoService {
-  private api = "http://localhost:8080/produtos"
+  private api = 'http://localhost:8080/produtos';
 
   constructor(private http: HttpClient) {}
 
-  listar(){
-    return this.http.get(this.api)
+  listar() {
+    return this.http.get<Produto[]>(this.api);
   }
 
-  salvar(produto:any){
-    return this.http.post(this.api, produto)
+  salvar(produto: Produto) {
+    return this.http.post<Produto>(this.api, produto);
+  }
+
+  excluir(id: number) {
+    return this.http.delete(`${this.api}/${id}`);
   }
 }

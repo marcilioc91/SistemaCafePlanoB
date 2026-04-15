@@ -8,3 +8,18 @@ export interface Venda {
   usuarioId: number;
   produtos: VendaProduto[];
 }
+
+export interface VendaItemResposta {
+  id: number;
+  produto: { id: number; nome: string };
+  quantidade: number;
+  precoUnitario: number;
+}
+
+export interface VendaResposta {
+  id: number;
+  cliente: { id: number; pessoa: { nome: string; cpf: string } };
+  usuario: { id: number; usuarioLogin: string };
+  itens: VendaItemResposta[];
+  data_venda: string;
+}

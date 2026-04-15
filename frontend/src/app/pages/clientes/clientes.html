@@ -1,1 +1,57 @@
-<p>clientes works!</p>
+<div class="clientes-container">
+  <div class="clientes-header">
+    <h2>Clientes</h2>
+    <div class="header-acoes">
+      <button mat-raised-button color="primary" (click)="abrirFormulario()">
+        <mat-icon>person_add</mat-icon>
+        Adicionar Cliente
+      </button>
+      <button mat-stroked-button routerLink="/home">
+        <mat-icon>arrow_back</mat-icon>
+        Voltar
+      </button>
+    </div>
+  </div>
+
+  @if (clientes.length === 0) {
+    <p class="sem-dados">Nenhum cliente cadastrado.</p>
+  } @else {
+    <table mat-table [dataSource]="clientes" class="clientes-tabela mat-elevation-z2">
+
+      <ng-container matColumnDef="nome">
+        <th mat-header-cell *matHeaderCellDef>Nome</th>
+        <td mat-cell *matCellDef="let c">{{ c.pessoa.nome }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="cpf">
+        <th mat-header-cell *matHeaderCellDef>CPF</th>
+        <td mat-cell *matCellDef="let c">{{ c.pessoa.cpf }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="telefone">
+        <th mat-header-cell *matHeaderCellDef>Telefone</th>
+        <td mat-cell *matCellDef="let c">{{ c.pessoa.telefone || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="obs">
+        <th mat-header-cell *matHeaderCellDef>Observações</th>
+        <td mat-cell *matCellDef="let c">{{ c.obs || '—' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let c">
+          <button mat-icon-button color="primary" (click)="verCompras(c)" title="Ver compras">
+            <mat-icon>shopping_bag</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="excluir(c)" title="Excluir">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+      <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+    </table>
+  }
+</div>

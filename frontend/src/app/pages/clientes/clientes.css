@@ -1,0 +1,27 @@
+.clientes-container {
+  padding: 32px;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.clientes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.header-acoes {
+  display: flex;
+  gap: 12px;
+}
+
+.clientes-tabela {
+  width: 100%;
+}
+
+.sem-dados {
+  text-align: center;
+  color: #888;
+  margin-top: 40px;
+}
