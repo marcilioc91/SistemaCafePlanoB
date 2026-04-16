@@ -90,11 +90,16 @@ export class Vendas implements OnInit {
     const usuario = this.auth.getUsuarioLogado();
     const totalVenda = this.total();
 
+    if (!this.clienteSelecionado.id || !usuario?.id) {
+      this.snackBar.open('Erro ao processar cliente ou usuário.', 'Fechar', { duration: 3000 });
+      return;
+    }
+
     const venda = {
       clienteId: this.clienteSelecionado.id,
-      usuarioId: usuario?.id,
+      usuarioId: usuario.id,
       produtos: this.carrinho.map(i => ({
-        produtoId: i.produto.id,
+        produtoId: i.produto.id!,
         quantidade: i.quantidade
       }))
     };

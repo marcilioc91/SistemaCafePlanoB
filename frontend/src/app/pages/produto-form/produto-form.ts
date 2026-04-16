@@ -24,6 +24,10 @@ import { ProdutoService } from '../../services/produto.service';
         <input matInput [(ngModel)]="dados.nome" name="nome">
       </mat-form-field>
       <mat-form-field>
+        <mat-label>Preço de custo (R$)</mat-label>
+        <input matInput [(ngModel)]="dados.preco_custo" name="preco_custo" type="number" min="0" step="0.01">
+      </mat-form-field>
+      <mat-form-field>
         <mat-label>Preço (R$)</mat-label>
         <input matInput [(ngModel)]="dados.preco" name="preco" type="number" min="0" step="0.01">
       </mat-form-field>
@@ -41,7 +45,7 @@ import { ProdutoService } from '../../services/produto.service';
   `,
 })
 export class ProdutoFormDialog {
-  dados: Produto = { nome: '', preco: 0, estoque: 0 };
+  dados: Produto = { nome: '', preco: 0, preco_custo: 0, estoque: 0 };
 
   constructor(private dialogRef: MatDialogRef<ProdutoFormDialog>) {}
 

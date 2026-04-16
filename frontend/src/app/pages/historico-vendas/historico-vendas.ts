@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -27,11 +27,12 @@ export class HistoricoVendas implements OnInit {
   vendas: VendaResposta[] = [];
   colunasItens = ['produto', 'quantidade', 'precoUnitario', 'subtotal'];
 
-  constructor(private vendaService: VendaService) {}
+  constructor(private vendaService: VendaService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.vendaService.listarTodas().subscribe(dados => {
       this.vendas = dados;
+      this.cdr.detectChanges();
     });
   }
 

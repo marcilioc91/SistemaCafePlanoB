@@ -15,5 +15,6 @@ public class Produto {
     private Long id;
     private String nome;
     private BigDecimal preco;
+    private BigDecimal preco_custo;
     private Integer estoque;
 }

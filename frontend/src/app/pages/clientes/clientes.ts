@@ -26,12 +26,14 @@ export class HistoricoClienteDialog implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<HistoricoClienteDialog>,
     private vendaService: VendaService,
+    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: { clienteId: number; nomeCliente: string }
   ) { }
 
   ngOnInit() {
     this.vendaService.listarPorCliente(this.data.clienteId).subscribe(dados => {
       this.vendas = dados;
+      this.cdr.detectChanges();
     });
   }
 
