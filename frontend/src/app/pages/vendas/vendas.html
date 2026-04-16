@@ -1,18 +1,103 @@
-<h2>Venda</h2>
+<div class="vendas-container">
 
-<h3>Produtos</h3>
-<ul>
-  <li *ngFor="let p of produtos">
-    {{p.nome}}
-    <button (click)="adicionar(p)">Adicionar</button>
-  </li>
-</ul>
+  <div class="vendas-header">
+    <h2>Nova Venda</h2>
+    <button mat-stroked-button routerLink="/home">
+      <mat-icon>arrow_back</mat-icon>
+      Voltar
+    </button>
+  </div>
 
-<h3>Itens</h3>
-<ul>
-  <li *ngFor="let i of itens">
-    Produto ID: {{i.produtoId}} - Qtd: {{i.quantidade}}
-  </li>
-</ul>
+  <mat-form-field class="full-width">
+    <mat-label>Cliente</mat-label>
+    <mat-select [(ngModel)]="clienteSelecionado">
+      @for (c of clientes; track c.id) {
+        <mat-option [value]="c">{{ c.pessoa.nome }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 
-<button (click)="finalizar()">Finalizar Venda</button>
+  <h3>Produtos disponíveis</h3>
+  <table mat-table [dataSource]="produtos" class="mat-elevation-z2 produtos-tabela">
+
+    <ng-container matColumnDef="nome">
+      <th mat-header-cell *matHeaderCellDef>Produto</th>
+      <td mat-cell *matCellDef="let p">{{ p.nome }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="preco">
+      <th mat-header-cell *matHeaderCellDef>Preço</th>
+      <td mat-cell *matCellDef="let p">R$ {{ p.preco | number:'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="estoque">
+      <th mat-header-cell *matHeaderCellDef>Estoque</th>
+      <td mat-cell *matCellDef="let p">{{ p.estoque }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="acoes">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let p">
+        <button mat-icon-button color="primary" (click)="adicionar(p)" [disabled]="p.estoque === 0" title="Adicionar ao carrinho">
+          <mat-icon>add_shopping_cart</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="colunasProdutos"></tr>
+    <tr mat-row *matRowDef="let row; columns: colunasProdutos;"></tr>
+  </table>
+
+  @if (carrinho.length > 0) {
+    <h3 class="carrinho-titulo">Carrinho</h3>
+    <table mat-table [dataSource]="carrinho" class="mat-elevation-z2 carrinho-tabela">
+
+      <ng-container matColumnDef="produto">
+        <th mat-header-cell *matHeaderCellDef>Produto</th>
+        <td mat-cell *matCellDef="let i">{{ i.produto.nome }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="preco">
+        <th mat-header-cell *matHeaderCellDef>Preço Unit.</th>
+        <td mat-cell *matCellDef="let i">R$ {{ i.produto.preco | number:'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="quantidade">
+        <th mat-header-cell *matHeaderCellDef>Qtd.</th>
+        <td mat-cell *matCellDef="let i">
+          <input type="number" [(ngModel)]="i.quantidade" min="1" class="qtd-input">
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="subtotal">
+        <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+        <td mat-cell *matCellDef="let i">R$ {{ i.produto.preco * i.quantidade | number:'1.2-2' }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let i">
+          <button mat-icon-button color="warn" (click)="remover(i.produto)" title="Remover">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="colunasCarrinho"></tr>
+      <tr mat-row *matRowDef="let row; columns: colunasCarrinho;"></tr>
+    </table>
+
+    <div class="total-row">
+      <span class="total-label">Total:</span>
+      <span class="total-valor">R$ {{ total() | number:'1.2-2' }}</span>
+    </div>
+
+    <div class="acoes-finalizar">
+      <button mat-raised-button color="primary" (click)="finalizar()">
+        <mat-icon>check_circle</mat-icon>
+        Finalizar Venda
+      </button>
+    </div>
+  }
+
+</div>

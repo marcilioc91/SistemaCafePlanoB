@@ -26,4 +26,17 @@ export class AuthService {
   cadastrar(dados: CadastroRequest) {
     return this.http.post(this.api + "/cadastro", dados)
   }
+
+  setUsuarioLogado(usuario: any) {
+    sessionStorage.setItem('usuario', JSON.stringify(usuario));
+  }
+
+  getUsuarioLogado(): any {
+    const u = sessionStorage.getItem('usuario');
+    return u ? JSON.parse(u) : null;
+  }
+
+  logout() {
+    sessionStorage.removeItem('usuario');
+  }
 }

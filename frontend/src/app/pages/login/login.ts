@@ -48,7 +48,10 @@ export class Login {
       return;
     }
     this.auth.login(this.conta).subscribe({
-      next: () => this.router.navigate(['/home']),
+      next: (usuario: any) => {
+        this.auth.setUsuarioLogado(usuario);
+        this.router.navigate(['/home']);
+      },
       error: () => {
         this.snackBar.open('Login ou senha inválidos.', 'Fechar', { duration: 3000 });
       }

@@ -1,5 +1,9 @@
 <div class="home-container">
   <div class="home-topbar">
+    <span class="home-usuario">
+      <mat-icon>account_circle</mat-icon>
+      {{ nomeUsuario }}
+    </span>
     <button mat-stroked-button color="warn" (click)="logout()">
       <mat-icon>logout</mat-icon>
       Sair

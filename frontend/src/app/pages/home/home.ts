@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -12,7 +13,12 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './home.css',
 })
 export class Home {
-  constructor(private router: Router) {}
+  nomeUsuario: string = '';
+
+  constructor(private router: Router, private auth: AuthService) {
+    const usuario = this.auth.getUsuarioLogado();
+    this.nomeUsuario = usuario?.pessoa?.nome ?? usuario?.usuarioLogin ?? '';
+  }
 
   irParaCadastroCliente() {
     this.router.navigate(['/clientes']);
@@ -31,6 +37,7 @@ export class Home {
   }
 
   logout() {
+    this.auth.logout();
     this.router.navigate(['/']);
   }
 }

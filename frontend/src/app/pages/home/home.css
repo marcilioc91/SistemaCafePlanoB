@@ -12,6 +12,18 @@
   position: absolute;
   top: 24px;
   right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.home-usuario {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  color: #4e342e;
+  font-weight: 500;
 }
 
 .home-titulo {
