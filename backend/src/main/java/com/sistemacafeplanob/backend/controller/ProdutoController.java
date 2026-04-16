@@ -23,6 +23,12 @@ public class ProdutoController {
         return service.salvar(produto);
     }
 
+    @PutMapping("/{id}")
+    public Produto atualizar(@PathVariable Long id, @RequestBody Produto produto) {
+        produto.setId(id);
+        return service.salvar(produto);
+    }
+
     @DeleteMapping("/{id}")
     public void excluir(@PathVariable Long id) {
         service.excluir(id);

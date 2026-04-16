@@ -18,6 +18,10 @@ export class ClienteService {
     return this.http.post<Cliente>(this.api, cliente)
   }
 
+  atualizar(id: number, cliente: Cliente) {
+    return this.http.put<Cliente>(`${this.api}/${id}`, cliente);
+  }
+
   excluir(id: number) {
     return this.http.delete(`${this.api}/${id}`)
   }

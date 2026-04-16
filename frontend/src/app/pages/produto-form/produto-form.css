@@ -27,6 +27,15 @@
 }
 
 .estoque-baixo {
+  color: #f57c00;
+  font-weight: 600;
+}
+
+.estoque-zero {
   color: #d32f2f;
   font-weight: 600;
+}
+
+.uppercase {
+  text-transform: uppercase;
 }

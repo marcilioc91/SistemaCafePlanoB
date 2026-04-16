@@ -1,6 +1,6 @@
 .historico-container {
   padding: 32px;
-  max-width: 900px;
+  max-width: 960px;
   margin: 0 auto;
 }
 
@@ -11,16 +11,36 @@
   margin-bottom: 24px;
 }
 
+.grupo-panel {
+  margin-bottom: 8px;
+}
+
 .itens-tabela {
   width: 100%;
   margin-bottom: 12px;
 }
 
-.total-linha {
-  text-align: right;
-  margin-top: 8px;
+.rodape-venda {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0 0;
   font-size: 0.9rem;
   color: #555;
+}
+
+.pendente {
+  color: #f57c00;
+  font-weight: 600;
+}
+
+.pago {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.uppercase {
+  text-transform: uppercase;
 }
 
 .sem-dados {

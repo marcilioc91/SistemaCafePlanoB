@@ -25,3 +25,7 @@
   color: #888;
   margin-top: 40px;
 }
+
+.uppercase {
+  text-transform: uppercase;
+}

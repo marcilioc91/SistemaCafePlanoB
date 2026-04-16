@@ -1,8 +1,9 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -12,13 +13,14 @@ import { RouterLink } from '@angular/router';
 import { Produto } from '../../models/produto';
 import { ProdutoService } from '../../services/produto.service';
 
+// ── Diálogo de novo/editar produto ────────────────────────────────────────────
 @Component({
   selector: 'app-produto-form-dialog',
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
   template: `
-    <h2 style="padding: 24px 24px 0">Novo Produto</h2>
-    <div style="padding: 0 24px 24px; display: flex; flex-direction: column; gap: 12px; min-width: 320px;">
+    <h2 style="padding: 24px 24px 0">{{ modoEdicao ? 'Editar Produto' : 'Novo Produto' }}</h2>
+    <div style="padding: 0 24px 24px; display: flex; flex-direction: column; gap: 4px; min-width: 320px;">
       <mat-form-field>
         <mat-label>Nome</mat-label>
         <input matInput [(ngModel)]="dados.nome" name="nome">
@@ -29,13 +31,14 @@ import { ProdutoService } from '../../services/produto.service';
       </mat-form-field>
       <mat-form-field>
         <mat-label>Preço (R$)</mat-label>
-        <input matInput [(ngModel)]="dados.preco" name="preco" type="number" min="0" step="0.01">
+        <input matInput [(ngModel)]="dados.preco" name="preco" type="number" min="0.01" step="0.01">
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Estoque inicial</mat-label>
+        <mat-label>Estoque</mat-label>
         <input matInput [(ngModel)]="dados.estoque" name="estoque" type="number" min="0">
       </mat-form-field>
-      <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      @if (erro) { <p style="color: red; font-size: 0.85rem">{{ erro }}</p> }
+      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
         <button mat-button (click)="fechar()">Cancelar</button>
         <button mat-raised-button color="primary"
           [disabled]="!dados.nome || dados.preco == null || dados.estoque == null"
@@ -45,19 +48,32 @@ import { ProdutoService } from '../../services/produto.service';
   `,
 })
 export class ProdutoFormDialog {
-  dados: Produto = { nome: '', preco: 0, preco_custo: 0, estoque: 0 };
+  dados: Produto;
+  modoEdicao: boolean;
+  erro = '';
 
-  constructor(private dialogRef: MatDialogRef<ProdutoFormDialog>) {}
+  constructor(
+    private dialogRef: MatDialogRef<ProdutoFormDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: { produto?: Produto } | null
+  ) {
+    this.modoEdicao = !!data?.produto;
+    this.dados = data?.produto
+      ? { ...data.produto }
+      : { nome: '', preco: 0, preco_custo: 0, estoque: 0 };
+  }
 
   confirmar() {
+    if (this.dados.preco <= 0) {
+      this.erro = 'O preço deve ser maior que zero.';
+      return;
+    }
     this.dialogRef.close(this.dados);
   }
 
-  fechar() {
-    this.dialogRef.close();
-  }
+  fechar() { this.dialogRef.close(); }
 }
 
+// ── Página de produtos ─────────────────────────────────────────────────────────
 @Component({
   selector: 'app-produto-form',
   standalone: true,
@@ -66,6 +82,7 @@ export class ProdutoFormDialog {
     MatTableModule,
     MatButtonModule,
     MatIconModule,
+    MatCheckboxModule,
     MatDialogModule,
     RouterLink,
   ],
@@ -74,7 +91,7 @@ export class ProdutoFormDialog {
 })
 export class ProdutoForm implements OnInit {
   produtos: Produto[] = [];
-  colunas = ['nome', 'preco', 'estoque', 'acoes'];
+  colunas = ['semEstoque', 'nome', 'preco', 'estoque', 'acoes'];
 
   constructor(
     private produtoService: ProdutoService,
@@ -83,14 +100,52 @@ export class ProdutoForm implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
-    this.carregar();
-  }
+  ngOnInit() { this.carregar(); }
 
   carregar() {
     this.produtoService.listar().subscribe(dados => {
       this.produtos = dados;
       this.cdr.detectChanges();
+    });
+  }
+
+  abrirFormulario() {
+    const ref = this.dialog.open(ProdutoFormDialog, { width: '400px', data: null });
+    ref.afterClosed().subscribe((dados: Produto | undefined) => {
+      if (!dados) return;
+      this.produtoService.salvar(dados).subscribe({
+        next: () => {
+          this.snackBar.open('Produto cadastrado com sucesso!', 'Fechar', { duration: 3000 });
+          this.carregar();
+        },
+        error: () => this.snackBar.open('Erro ao cadastrar produto.', 'Fechar', { duration: 3000 })
+      });
+    });
+  }
+
+  abrirEdicao(produto: Produto) {
+    const ref = this.dialog.open(ProdutoFormDialog, { width: '400px', data: { produto } });
+    ref.afterClosed().subscribe((dados: Produto | undefined) => {
+      if (!dados || !dados.id) return;
+      this.produtoService.atualizar(dados.id, dados).subscribe({
+        next: () => {
+          this.snackBar.open('Produto atualizado!', 'Fechar', { duration: 3000 });
+          this.carregar();
+        },
+        error: () => this.snackBar.open('Erro ao atualizar produto.', 'Fechar', { duration: 3000 })
+      });
+    });
+  }
+
+  marcarSemEstoque(produto: Produto, checked: boolean) {
+    if (!produto.id || !checked) return;
+    const atualizado = { ...produto, estoque: 0 };
+    this.produtoService.atualizar(produto.id, atualizado).subscribe({
+      next: () => {
+        this.snackBar.open('Produto marcado como sem estoque.', 'Fechar', { duration: 3000 });
+        this.carregar();
+      },
+      error: () => this.snackBar.open('Erro ao atualizar estoque.', 'Fechar', { duration: 3000 })
     });
   }
 
@@ -101,25 +156,7 @@ export class ProdutoForm implements OnInit {
         this.snackBar.open('Produto excluído.', 'Fechar', { duration: 3000 });
         this.carregar();
       },
-      error: () => {
-        this.snackBar.open('Erro ao excluir produto.', 'Fechar', { duration: 3000 });
-      }
-    });
-  }
-
-  abrirFormulario() {
-    const ref = this.dialog.open(ProdutoFormDialog, { width: '400px' });
-    ref.afterClosed().subscribe((dados: Produto | undefined) => {
-      if (!dados) return;
-      this.produtoService.salvar(dados).subscribe({
-        next: () => {
-          this.snackBar.open('Produto cadastrado com sucesso!', 'Fechar', { duration: 3000 });
-          this.carregar();
-        },
-        error: () => {
-          this.snackBar.open('Erro ao cadastrar produto.', 'Fechar', { duration: 3000 });
-        }
-      });
+      error: () => this.snackBar.open('Erro ao excluir produto.', 'Fechar', { duration: 3000 })
     });
   }
 }

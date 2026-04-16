@@ -23,6 +23,11 @@ public class ClienteController {
         return service.salvar(cliente);
     }
 
+    @PutMapping("/{id}")
+    public Cliente atualizar(@PathVariable Integer id, @RequestBody Cliente cliente) {
+        return service.atualizar(id, cliente);
+    }
+
     @DeleteMapping("/{id}")
     public void excluir(@PathVariable Integer id) {
         service.excluir(id);

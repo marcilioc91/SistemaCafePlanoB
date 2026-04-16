@@ -33,6 +33,8 @@ public class VendaService {
         Venda venda = new Venda();
         venda.setCliente(entityManager.getReference(Cliente.class, dto.getClienteId()));
         venda.setUsuario(entityManager.getReference(Usuario.class, dto.getUsuarioId()));
+        venda.setFormaPagamento(dto.getFormaPagamento());
+        venda.setValorPago(dto.getValorPago());
 
         venda = vendaRepository.save(venda);
 

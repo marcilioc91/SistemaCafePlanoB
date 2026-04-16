@@ -1,18 +1,90 @@
 import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
+import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { Cliente } from '../../models/cliente';
 import { VendaResposta } from '../../models/venda';
 import { ClienteService } from '../../services/cliente.service';
 import { VendaService } from '../../services/venda.service';
 import { CadastroModal } from '../cadastro-modal/cadastro-modal';
 
+// ── Diálogo de edição ──────────────────────────────────────────────────────────
+@Component({
+  selector: 'app-cliente-edit-dialog',
+  standalone: true,
+  imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, NgxMaskDirective],
+  providers: [provideNgxMask()],
+  template: `
+    <h2 style="padding: 24px 24px 0">Editar Cliente</h2>
+    <div style="padding: 0 24px 24px; display: flex; flex-direction: column; gap: 4px; min-width: 340px;">
+      <mat-form-field>
+        <mat-label>Nome</mat-label>
+        <input matInput [(ngModel)]="form.nome" name="nome">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>CPF</mat-label>
+        <input matInput [(ngModel)]="form.cpf" name="cpf" mask="000.000.000-00">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Telefone</mat-label>
+        <input matInput [(ngModel)]="form.telefone" name="telefone" mask="(00) 00000-0000">
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Observações</mat-label>
+        <input matInput [(ngModel)]="form.obs" name="obs">
+      </mat-form-field>
+      @if (erro) { <p style="color: red; font-size: 0.85rem">{{ erro }}</p> }
+      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
+        <button mat-button (click)="fechar()">Cancelar</button>
+        <button mat-raised-button color="primary"
+          [disabled]="!form.nome || !form.cpf"
+          (click)="salvar()">Salvar</button>
+      </div>
+    </div>
+  `,
+})
+export class ClienteEditDialog {
+  form = { nome: '', cpf: '', telefone: '', obs: '' };
+  erro = '';
+
+  constructor(
+    private dialogRef: MatDialogRef<ClienteEditDialog>,
+    private clienteService: ClienteService,
+    @Inject(MAT_DIALOG_DATA) public data: { cliente: Cliente }
+  ) {
+    const { pessoa, obs } = data.cliente;
+    this.form = {
+      nome: pessoa.nome,
+      cpf: pessoa.cpf,
+      telefone: pessoa.telefone ?? '',
+      obs: obs ?? '',
+    };
+  }
+
+  salvar() {
+    const atualizado: Cliente = {
+      pessoa: { nome: this.form.nome, cpf: this.form.cpf, telefone: this.form.telefone || undefined },
+      obs: this.form.obs || undefined,
+    };
+    this.clienteService.atualizar(this.data.cliente.id!, atualizado).subscribe({
+      next: () => this.dialogRef.close(true),
+      error: () => { this.erro = 'Erro ao salvar. Verifique os dados.'; }
+    });
+  }
+
+  fechar() { this.dialogRef.close(); }
+}
+
+// ── Diálogo de histórico de compras ───────────────────────────────────────────
 @Component({
   selector: 'app-historico-cliente-dialog',
   standalone: true,
@@ -26,14 +98,12 @@ export class HistoricoClienteDialog implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<HistoricoClienteDialog>,
     private vendaService: VendaService,
-    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: { clienteId: number; nomeCliente: string }
   ) { }
 
   ngOnInit() {
     this.vendaService.listarPorCliente(this.data.clienteId).subscribe(dados => {
       this.vendas = dados;
-      this.cdr.detectChanges();
     });
   }
 
@@ -41,11 +111,10 @@ export class HistoricoClienteDialog implements OnInit {
     return venda.itens?.reduce((acc, i) => acc + i.quantidade * +i.precoUnitario, 0) ?? 0;
   }
 
-  fechar() {
-    this.dialogRef.close();
-  }
+  fechar() { this.dialogRef.close(); }
 }
 
+// ── Página de clientes ─────────────────────────────────────────────────────────
 @Component({
   selector: 'app-clientes',
   standalone: true,
@@ -71,9 +140,7 @@ export class Clientes implements OnInit {
     private cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit() {
-    this.carregar();
-  }
+  ngOnInit() { this.carregar(); }
 
   carregar() {
     this.clienteService.listar().subscribe({
@@ -99,14 +166,22 @@ export class Clientes implements OnInit {
     });
   }
 
-  verCompras(cliente: Cliente) {
-    const ref = this.dialog.open(HistoricoClienteDialog, {
-      width: '560px',
-      data: { clienteId: cliente.id, nomeCliente: cliente.pessoa.nome }
+  abrirEdicao(cliente: Cliente) {
+    const ref = this.dialog.open(ClienteEditDialog, {
+      width: '420px',
+      data: { cliente }
     });
-
-    ref.afterClosed().subscribe(() => {
+    ref.afterClosed().subscribe(sucesso => {
+      if (!sucesso) return;
+      this.snackBar.open('Cliente atualizado!', 'Fechar', { duration: 3000 });
       this.carregar();
+    });
+  }
+
+  verCompras(cliente: Cliente) {
+    this.dialog.open(HistoricoClienteDialog, {
+      width: '600px',
+      data: { clienteId: cliente.id, nomeCliente: cliente.pessoa.nome }
     });
   }
 

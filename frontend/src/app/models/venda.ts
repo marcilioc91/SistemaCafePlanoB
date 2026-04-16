@@ -7,6 +7,8 @@ export interface Venda {
   clienteId: number;
   usuarioId: number;
   produtos: VendaProduto[];
+  formaPagamento: string;
+  valorPago: number;
 }
 
 export interface VendaItemResposta {
@@ -22,4 +24,6 @@ export interface VendaResposta {
   usuario: { id: number; usuarioLogin: string };
   itens: VendaItemResposta[];
   data_venda: string;
+  formaPagamento: string;
+  valorPago: number;
 }

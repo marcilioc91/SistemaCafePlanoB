@@ -18,9 +18,21 @@
   } @else {
     <table mat-table [dataSource]="produtos" class="produtos-tabela mat-elevation-z2">
 
+      <ng-container matColumnDef="semEstoque">
+        <th mat-header-cell *matHeaderCellDef title="Sem estoque">S/E</th>
+        <td mat-cell *matCellDef="let p">
+          <mat-checkbox
+            [checked]="p.estoque === 0"
+            [disabled]="p.estoque === 0"
+            (change)="marcarSemEstoque(p, $event.checked)"
+            title="Marcar como sem estoque">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
       <ng-container matColumnDef="nome">
-        <th mat-header-cell *matHeaderCellDef>Nome</th>
-        <td mat-cell *matCellDef="let p">{{ p.nome }}</td>
+        <th mat-header-cell *matHeaderCellDef>Produto</th>
+        <td mat-cell *matCellDef="let p" class="uppercase">{{ p.nome }}</td>
       </ng-container>
 
       <ng-container matColumnDef="preco">
@@ -31,13 +43,18 @@
       <ng-container matColumnDef="estoque">
         <th mat-header-cell *matHeaderCellDef>Estoque</th>
         <td mat-cell *matCellDef="let p">
-          <span [class.estoque-baixo]="p.estoque <= 5">{{ p.estoque }} un.</span>
+          <span [class.estoque-zero]="p.estoque === 0" [class.estoque-baixo]="p.estoque > 0 && p.estoque <= 5">
+            {{ p.estoque }} un.
+          </span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="acoes">
-        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let p">
+          <button mat-icon-button (click)="abrirEdicao(p)" title="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
           <button mat-icon-button color="warn" (click)="excluir(p)" title="Excluir">
             <mat-icon>delete</mat-icon>
           </button>

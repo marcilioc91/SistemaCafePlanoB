@@ -7,51 +7,69 @@
     </button>
   </div>
 
-  @if (vendas.length === 0) {
+  @if (grupos.length === 0) {
     <p class="sem-dados">Nenhuma venda registrada.</p>
   } @else {
-    <mat-accordion>
-      @for (venda of vendas; track venda.id) {
-        <mat-expansion-panel>
+    <mat-accordion multi>
+      @for (grupo of grupos; track grupo.clienteId) {
+        <mat-expansion-panel class="grupo-panel">
           <mat-expansion-panel-header>
-            <mat-panel-title>
-              Venda #{{ venda.id }} — {{ venda.cliente.pessoa.nome }}
+            <mat-panel-title class="uppercase">
+              <mat-icon style="margin-right: 8px; font-size:20px; line-height:20px">person</mat-icon>
+              {{ grupo.nomeCliente }}
             </mat-panel-title>
             <mat-panel-description>
-              {{ venda.data_venda | date:'dd/MM/yyyy HH:mm' }} &nbsp;|&nbsp;
-              Total: R$ {{ totalVenda(venda) | number:'1.2-2' }}
+              {{ grupo.vendas.length }} venda(s) &nbsp;|&nbsp;
+              <strong>Total acumulado: R$ {{ grupo.totalGasto | number:'1.2-2' }}</strong>
             </mat-panel-description>
           </mat-expansion-panel-header>
 
-          <table mat-table [dataSource]="venda.itens" class="itens-tabela">
+          <mat-accordion>
+            @for (venda of grupo.vendas; track venda.id) {
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>Venda #{{ venda.id }}</mat-panel-title>
+                  <mat-panel-description>
+                    {{ venda.data_venda | date:'dd/MM/yyyy HH:mm' }}
+                    &nbsp;|&nbsp; R$ {{ totalVenda(venda) | number:'1.2-2' }}
+                    &nbsp;|&nbsp; {{ labelPagamento(venda.formaPagamento) }}
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
 
-            <ng-container matColumnDef="produto">
-              <th mat-header-cell *matHeaderCellDef>Produto</th>
-              <td mat-cell *matCellDef="let item">{{ item.produto.nome }}</td>
-            </ng-container>
+                <table mat-table [dataSource]="venda.itens" class="itens-tabela">
+                  <ng-container matColumnDef="produto">
+                    <th mat-header-cell *matHeaderCellDef>Produto</th>
+                    <td mat-cell *matCellDef="let item">{{ item.produto.nome }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="quantidade">
+                    <th mat-header-cell *matHeaderCellDef>Qtd.</th>
+                    <td mat-cell *matCellDef="let item">{{ item.quantidade }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="precoUnitario">
+                    <th mat-header-cell *matHeaderCellDef>Preço Unit.</th>
+                    <td mat-cell *matCellDef="let item">R$ {{ item.precoUnitario | number:'1.2-2' }}</td>
+                  </ng-container>
+                  <ng-container matColumnDef="subtotal">
+                    <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+                    <td mat-cell *matCellDef="let item">R$ {{ item.quantidade * item.precoUnitario | number:'1.2-2' }}</td>
+                  </ng-container>
+                  <tr mat-header-row *matHeaderRowDef="colunasItens"></tr>
+                  <tr mat-row *matRowDef="let row; columns: colunasItens;"></tr>
+                </table>
 
-            <ng-container matColumnDef="quantidade">
-              <th mat-header-cell *matHeaderCellDef>Qtd.</th>
-              <td mat-cell *matCellDef="let item">{{ item.quantidade }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="precoUnitario">
-              <th mat-header-cell *matHeaderCellDef>Preço Unit.</th>
-              <td mat-cell *matCellDef="let item">R$ {{ item.precoUnitario | number:'1.2-2' }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="subtotal">
-              <th mat-header-cell *matHeaderCellDef>Subtotal</th>
-              <td mat-cell *matCellDef="let item">R$ {{ item.quantidade * item.precoUnitario | number:'1.2-2' }}</td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="colunasItens"></tr>
-            <tr mat-row *matRowDef="let row; columns: colunasItens;"></tr>
-          </table>
-
-          <p class="total-linha">
-            <strong>Atendido por:</strong> {{ venda.usuario.usuarioLogin }}
-          </p>
+                <div class="rodape-venda">
+                  <span>Atendido por: <strong>{{ venda.usuario.usuarioLogin }}</strong></span>
+                  @if (venda.formaPagamento === 'PENDENTE' || venda.valorPago < totalVenda(venda)) {
+                    <span class="pendente">
+                      Pendente: R$ {{ (totalVenda(venda) - (venda.valorPago ?? 0)) | number:'1.2-2' }}
+                    </span>
+                  } @else {
+                    <span class="pago">Pago</span>
+                  }
+                </div>
+              </mat-expansion-panel>
+            }
+          </mat-accordion>
         </mat-expansion-panel>
       }
     </mat-accordion>

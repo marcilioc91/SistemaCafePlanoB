@@ -29,6 +29,19 @@ public class ClienteService {
         return repository.save(cliente);
     }
 
+    @Transactional
+    public Cliente atualizar(Integer id, Cliente clienteAtualizado) {
+        Cliente existente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        Pessoa pessoa = existente.getPessoa();
+        pessoa.setNome(clienteAtualizado.getPessoa().getNome());
+        pessoa.setCpf(clienteAtualizado.getPessoa().getCpf());
+        pessoa.setTelefone(clienteAtualizado.getPessoa().getTelefone());
+        pessoaRepository.save(pessoa);
+        existente.setObs(clienteAtualizado.getObs());
+        return repository.save(existente);
+    }
+
     public void excluir(Integer id) {
         repository.deleteById(id);
     }
