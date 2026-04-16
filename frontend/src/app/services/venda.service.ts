@@ -21,4 +21,8 @@ export class VendaService {
   listarPorCliente(clienteId: number) {
     return this.http.get<VendaResposta[]>(`${this.api}/cliente/${clienteId}`)
   }
+
+  atualizarPagamento(id: number, dados: { formaPagamento: string; valorPago: number }) {
+    return this.http.patch(`${this.api}/${id}/pagamento`, dados);
+  }
 }

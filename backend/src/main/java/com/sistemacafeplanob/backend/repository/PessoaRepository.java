@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PessoaRepository extends JpaRepository<Pessoa, Integer> {
     Optional<Pessoa> findByCpf(String cpf);
+    boolean existsByCpf(String cpf);
+    boolean existsByCpfAndIdNot(String cpf, int id);
 }

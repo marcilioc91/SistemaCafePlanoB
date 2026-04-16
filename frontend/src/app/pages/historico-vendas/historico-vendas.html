@@ -7,7 +7,12 @@
     </button>
   </div>
 
-  @if (grupos.length === 0) {
+  @if (carregando) {
+    <div class="carregando">
+      <mat-icon>hourglass_empty</mat-icon>
+      Carregando...
+    </div>
+  } @else if (grupos.length === 0) {
     <p class="sem-dados">Nenhuma venda registrada.</p>
   } @else {
     <mat-accordion multi>
@@ -59,14 +64,20 @@
 
                 <div class="rodape-venda">
                   <span>Atendido por: <strong>{{ venda.usuario.usuarioLogin }}</strong></span>
-                  @if (venda.formaPagamento === 'PENDENTE' || venda.valorPago < totalVenda(venda)) {
-                    <span class="pendente">
-                      Pendente: R$ {{ (totalVenda(venda) - (venda.valorPago ?? 0)) | number:'1.2-2' }}
-                    </span>
-                  } @else {
-                    <span class="pago">Pago</span>
-                  }
+                  <div class="rodape-pagamento">
+                    @if (venda.formaPagamento === 'PENDENTE' || (venda.valorPago ?? 0) < totalVenda(venda)) {
+                      <span class="pendente">
+                        Pendente: R$ {{ (totalVenda(venda) - (venda.valorPago ?? 0)) | number:'1.2-2' }}
+                      </span>
+                    } @else {
+                      <span class="pago">Pago</span>
+                    }
+                    <button mat-icon-button (click)="abrirEdicaoPagamento(venda)" title="Editar pagamento">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  </div>
                 </div>
+
               </mat-expansion-panel>
             }
           </mat-accordion>

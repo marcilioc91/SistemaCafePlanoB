@@ -1,5 +1,6 @@
 package com.sistemacafeplanob.backend.service;
 
+import com.sistemacafeplanob.backend.dto.PagamentoRequestDTO;
 import com.sistemacafeplanob.backend.dto.VendaRequestDTO;
 import com.sistemacafeplanob.backend.dto.VendaProdutoRequestDTO;
 import com.sistemacafeplanob.backend.entity.Cliente;
@@ -58,10 +59,19 @@ public class VendaService {
     }
 
     public List<Venda> listarTodas() {
-        return vendaRepository.findAll();
+        return vendaRepository.findAllComItens();
     }
 
     public List<Venda> listarPorCliente(Long clienteId) {
-        return vendaRepository.findByClienteId(clienteId);
+        return vendaRepository.findByClienteIdComItens(clienteId);
+    }
+
+    @Transactional
+    public Venda atualizarPagamento(Long id, PagamentoRequestDTO dto) {
+        Venda venda = vendaRepository.findById(id.intValue())
+                .orElseThrow(() -> new RuntimeException("Venda não encontrada: " + id));
+        venda.setFormaPagamento(dto.getFormaPagamento());
+        venda.setValorPago(dto.getValorPago());
+        return vendaRepository.save(venda);
     }
 }

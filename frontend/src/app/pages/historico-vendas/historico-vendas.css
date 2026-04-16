@@ -20,6 +20,16 @@
   margin-bottom: 12px;
 }
 
+.carregando {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 48px;
+  color: #888;
+  font-size: 1rem;
+}
+
 .rodape-venda {
   display: flex;
   justify-content: space-between;
@@ -27,6 +37,12 @@
   padding: 8px 0 0;
   font-size: 0.9rem;
   color: #555;
+}
+
+.rodape-pagamento {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .pendente {
