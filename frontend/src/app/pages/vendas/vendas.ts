@@ -2,10 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Produto } from '../../models/produto';
 import { ProdutoService } from '../../services/produto.service';
 import { VendaService } from '../../services/venda.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-vendas',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './vendas.html',
   styleUrl: './vendas.css',
 })

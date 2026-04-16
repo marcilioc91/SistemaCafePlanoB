@@ -42,12 +42,10 @@ public class UsuarioService {
         usuario.setSenha(dto.getSenha());
         usuario = repository.save(usuario);
 
-        if (dto.getObs() != null && !dto.getObs().isBlank()) {
-            Cliente cliente = new Cliente();
-            cliente.setPessoa(pessoa);
-            cliente.setObs(dto.getObs());
-            clienteRepository.save(cliente);
-        }
+        Cliente cliente = new Cliente();
+        cliente.setPessoa(pessoa);
+        cliente.setObs(dto.getObs());
+        clienteRepository.save(cliente);
 
         return usuario;
     }
