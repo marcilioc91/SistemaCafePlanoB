@@ -62,6 +62,19 @@ export class CadastroModal {
     obs: ''
   }
 
+  validarCpf() {
+    if (!cpfValido(this.conta.cpf)) {
+      this.erro = 'CPF inválido.';
+      this.cdr.markForCheck();
+    } else {
+      this.erro = '';
+    }
+  }
+
+  get isCpfValido(): boolean {
+    return cpfValido(this.conta.cpf);
+  }
+
   erro = '';
 
   constructor(

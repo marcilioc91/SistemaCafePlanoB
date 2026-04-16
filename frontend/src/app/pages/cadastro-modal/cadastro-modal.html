@@ -14,7 +14,8 @@
 
             <mat-form-field class="full-width">
                 <mat-label>CPF</mat-label>
-                <input matInput [(ngModel)]="conta.cpf" name="cpf" mask="000.000.000-00">
+                <input matInput [(ngModel)]="conta.cpf" name="cpf" mask="000.000.000-00"
+                (blur)="validarCpf()">
             </mat-form-field>
 
             @if (!modoCliente) {
@@ -43,7 +44,7 @@
 
             @if (modoCliente) {
             <button type="button" mat-raised-button color="primary" (click)="salvar()"
-                [disabled]="!conta.nome || !conta.cpf">
+                [disabled]="!conta.nome || (!conta.cpf || !isCpfValido)">
                 Salvar
             </button>
             }

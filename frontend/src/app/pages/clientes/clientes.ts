@@ -23,34 +23,7 @@ import { CadastroModal } from '../cadastro-modal/cadastro-modal';
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, NgxMaskDirective],
   providers: [provideNgxMask()],
-  template: `
-    <h2 style="padding: 24px 24px 0">Editar Cliente</h2>
-    <div style="padding: 0 24px 24px; display: flex; flex-direction: column; gap: 4px; min-width: 340px;">
-      <mat-form-field>
-        <mat-label>Nome</mat-label>
-        <input matInput [(ngModel)]="form.nome" name="nome">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>CPF</mat-label>
-        <input matInput [(ngModel)]="form.cpf" name="cpf" mask="000.000.000-00">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Telefone</mat-label>
-        <input matInput [(ngModel)]="form.telefone" name="telefone" mask="(00) 00000-0000">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Observações</mat-label>
-        <input matInput [(ngModel)]="form.obs" name="obs">
-      </mat-form-field>
-      @if (erro) { <p style="color: red; font-size: 0.85rem">{{ erro }}</p> }
-      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
-        <button mat-button (click)="fechar()">Cancelar</button>
-        <button mat-raised-button color="primary"
-          [disabled]="!form.nome || !form.cpf"
-          (click)="salvar()">Salvar</button>
-      </div>
-    </div>
-  `,
+  templateUrl: './cliente-edit-dialog.html',
 })
 export class ClienteEditDialog {
   form = { nome: '', cpf: '', telefone: '', obs: '' };
@@ -98,12 +71,14 @@ export class HistoricoClienteDialog implements OnInit {
   constructor(
     private dialogRef: MatDialogRef<HistoricoClienteDialog>,
     private vendaService: VendaService,
+    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: { clienteId: number; nomeCliente: string }
   ) { }
 
   ngOnInit() {
     this.vendaService.listarPorCliente(this.data.clienteId).subscribe(dados => {
       this.vendas = dados;
+      this.cdr.detectChanges();
     });
   }
 
