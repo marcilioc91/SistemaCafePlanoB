@@ -33,6 +33,7 @@ build/
 .vscode/
 
 ### Arquivos do projeto ignorados ###
-backend/src/main/resources/*.properties
+backend/src/main/resources/
 *.zip
 Annotations
+*.sql
