@@ -50,6 +50,7 @@ public class UsuarioService {
         Pessoa pessoa = new Pessoa();
         pessoa.setNome(dto.getNome());
         pessoa.setCpf(cpfLimpo);
+        pessoa.setTelefone(dto.getTelefone());
         pessoa = pessoaRepository.save(pessoa);
 
         Usuario usuario = new Usuario();
