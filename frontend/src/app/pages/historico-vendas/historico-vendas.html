@@ -7,6 +7,41 @@
     </button>
   </div>
 
+  <div class="filtros-bar">
+    <mat-form-field appearance="outline" class="filtro-campo">
+      <mat-label>Mês</mat-label>
+      <mat-select [(ngModel)]="filtroMes">
+        @for (m of meses; track m.valor) {
+          <mat-option [value]="m.valor">{{ m.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtro-campo">
+      <mat-label>Ano</mat-label>
+      <mat-select [(ngModel)]="filtroAno">
+        @for (a of anos; track a.valor) {
+          <mat-option [value]="a.valor">{{ a.label }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtro-campo">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="filtroStatus">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="PENDENTE">Pendente</mat-option>
+        <mat-option value="PAGO">Pago</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    @if (filtroMes || filtroAno || filtroStatus) {
+      <button mat-icon-button (click)="limparFiltros()" matTooltip="Limpar filtros">
+        <mat-icon>filter_alt_off</mat-icon>
+      </button>
+    }
+  </div>
+
   @if (carregando) {
   <div class="carregando">
     <mat-icon>hourglass_empty</mat-icon>
@@ -14,9 +49,11 @@
   </div>
   } @else if (grupos.length === 0) {
   <p class="sem-dados">Nenhuma venda registrada.</p>
+  } @else if (gruposFiltrados.length === 0) {
+  <p class="sem-dados">Nenhuma venda encontrada com os filtros selecionados.</p>
   } @else {
   <mat-accordion multi>
-    @for (grupo of grupos; track grupo.clienteId) {
+    @for (grupo of gruposFiltrados; track grupo.clienteId) {
     <mat-expansion-panel class="grupo-panel">
       <mat-expansion-panel-header>
         <mat-panel-title class="uppercase">

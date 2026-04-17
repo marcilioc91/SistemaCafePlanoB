@@ -4,6 +4,8 @@ import com.sistemacafeplanob.backend.entity.Cliente;
 import com.sistemacafeplanob.backend.entity.Pessoa;
 import com.sistemacafeplanob.backend.repository.ClienteRepository;
 import com.sistemacafeplanob.backend.repository.PessoaRepository;
+import com.sistemacafeplanob.backend.repository.UsuarioRepository;
+import com.sistemacafeplanob.backend.repository.VendaRepository;
 import com.sistemacafeplanob.backend.util.ValidacaoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,12 @@ public class ClienteService {
 
     @Autowired
     private PessoaRepository pessoaRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private VendaRepository vendaRepository;
 
     public List<Cliente> listar() {
         return repository.findAll();
@@ -56,8 +64,21 @@ public class ClienteService {
         return repository.save(existente);
     }
 
+    @Transactional
     public void excluir(Integer id) {
-        repository.deleteById(id);
+        Cliente cliente = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
+        Pessoa pessoa = cliente.getPessoa();
+
+        vendaRepository.deleteAll(vendaRepository.findByClienteId(cliente.getId()));
+
+        usuarioRepository.findByPessoa(pessoa).ifPresent(u -> {
+            vendaRepository.deleteAll(vendaRepository.findByUsuarioId(u.getId()));
+            usuarioRepository.delete(u);
+        });
+
+        repository.delete(cliente);
+        pessoaRepository.delete(pessoa);
     }
 
     private String limparCpf(String cpf) {

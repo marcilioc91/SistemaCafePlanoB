@@ -69,3 +69,15 @@
   color: #2e7d32;
   font-weight: 600;
 }
+
+.filtros-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.filtro-campo {
+  min-width: 160px;
+}

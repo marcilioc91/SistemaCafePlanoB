@@ -9,13 +9,35 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgxMaskDirective, provideNgxMask } from 'ngx-mask';
 import { Cliente } from '../../models/cliente';
 import { VendaResposta } from '../../models/venda';
+import { AuthService } from '../../services/auth.service';
 import { ClienteService } from '../../services/cliente.service';
 import { VendaService } from '../../services/venda.service';
 import { CadastroModal } from '../cadastro-modal/cadastro-modal';
+
+// ── Diálogo de confirmação ────────────────────────────────────────────────────
+@Component({
+  selector: 'app-confirm-dialog',
+  standalone: true,
+  imports: [MatButtonModule, MatDialogModule],
+  template: `
+    <h2 mat-dialog-title>{{ data.titulo }}</h2>
+    <mat-dialog-content>{{ data.mensagem }}</mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-stroked-button (click)="dialogRef.close(false)">Não</button>
+      <button mat-raised-button color="warn" (click)="dialogRef.close(true)">Sim</button>
+    </mat-dialog-actions>
+  `,
+})
+export class ConfirmDialog {
+  constructor(
+    public dialogRef: MatDialogRef<ConfirmDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: { titulo: string; mensagem: string }
+  ) {}
+}
 
 // ── Diálogo de edição ──────────────────────────────────────────────────────────
 @Component({
@@ -110,8 +132,10 @@ export class Clientes implements OnInit {
 
   constructor(
     private clienteService: ClienteService,
+    private authService: AuthService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
+    private router: Router,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -162,14 +186,31 @@ export class Clientes implements OnInit {
 
   excluir(cliente: Cliente) {
     if (!cliente.id) return;
-    this.clienteService.excluir(cliente.id).subscribe({
-      next: () => {
-        this.snackBar.open('Cliente excluído.', 'Fechar', { duration: 3000 });
-        this.carregar();
+    const ref = this.dialog.open(ConfirmDialog, {
+      width: '380px',
+      data: {
+        titulo: 'Excluir cliente',
+        mensagem: `Deseja excluir "${cliente.pessoa.nome}"? Todas as vendas, o usuário e os dados pessoais vinculados serão removidos permanentemente.`,
       },
-      error: () => {
-        this.snackBar.open('Erro ao excluir cliente.', 'Fechar', { duration: 3000 });
-      }
+    });
+    ref.afterClosed().subscribe((confirmado: boolean) => {
+      if (!confirmado) return;
+      const usuarioLogado = this.authService.getUsuarioLogado();
+      const eOProprio = usuarioLogado?.pessoa?.cpf === cliente.pessoa.cpf;
+      this.clienteService.excluir(cliente.id!).subscribe({
+        next: () => {
+          this.snackBar.open('Cliente excluído.', 'Fechar', { duration: 3000 });
+          if (eOProprio) {
+            this.authService.logout();
+            this.router.navigate(['/login']);
+          } else {
+            this.carregar();
+          }
+        },
+        error: () => {
+          this.snackBar.open('Erro ao excluir cliente.', 'Fechar', { duration: 3000 });
+        }
+      });
     });
   }
 }

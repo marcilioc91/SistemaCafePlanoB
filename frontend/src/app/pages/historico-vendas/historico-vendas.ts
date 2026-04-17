@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { VendaResposta } from '../../models/venda';
 import { VendaService } from '../../services/venda.service';
@@ -75,11 +76,15 @@ export class PagamentoDialog {
   imports: [
     CommonModule,
     DatePipe,
+    FormsModule,
     MatTableModule,
     MatButtonModule,
     MatIconModule,
     MatExpansionModule,
     MatDialogModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatTooltipModule,
     RouterLink,
   ],
   templateUrl: './historico-vendas.html',
@@ -89,6 +94,76 @@ export class HistoricoVendas implements OnInit {
   grupos: GrupoCliente[] = [];
   carregando = true;
   colunasItens = ['produto', 'quantidade', 'precoUnitario', 'subtotal'];
+
+  filtroMes = 0;
+  filtroAno = 0;
+  filtroStatus = '';
+
+  readonly meses = [
+    { valor: 0, label: 'Todos os meses' },
+    { valor: 1, label: 'Janeiro' }, { valor: 2, label: 'Fevereiro' },
+    { valor: 3, label: 'Março' }, { valor: 4, label: 'Abril' },
+    { valor: 5, label: 'Maio' }, { valor: 6, label: 'Junho' },
+    { valor: 7, label: 'Julho' }, { valor: 8, label: 'Agosto' },
+    { valor: 9, label: 'Setembro' }, { valor: 10, label: 'Outubro' },
+    { valor: 11, label: 'Novembro' }, { valor: 12, label: 'Dezembro' },
+  ];
+
+  get anos(): { valor: number; label: string }[] {
+    const set = new Set<number>();
+    for (const g of this.grupos) {
+      for (const v of g.vendas) {
+        set.add(new Date(v.data_venda).getFullYear());
+      }
+    }
+    const anoAtual = new Date().getFullYear();
+    if (!set.has(anoAtual)) set.add(anoAtual);
+    return [
+      { valor: 0, label: 'Todos os anos' },
+      ...Array.from(set).sort().map(a => ({ valor: a, label: String(a) })),
+    ];
+  }
+
+  get gruposFiltrados(): GrupoCliente[] {
+    return this.grupos
+      .map(grupo => {
+        let vendas = grupo.vendas;
+
+        if (this.filtroMes || this.filtroAno) {
+          vendas = vendas.filter(v => {
+            const d = new Date(v.data_venda);
+            return (!this.filtroMes || d.getMonth() + 1 === this.filtroMes) &&
+                   (!this.filtroAno || d.getFullYear() === this.filtroAno);
+          });
+        }
+
+        if (this.filtroStatus === 'PENDENTE') {
+          vendas = vendas.filter(v => (v.valorPago ?? 0) < this.totalVenda(v));
+        } else if (this.filtroStatus === 'PAGO') {
+          vendas = vendas.filter(v => (v.valorPago ?? 0) >= this.totalVenda(v));
+        }
+
+        if (!vendas.length) return null;
+
+        let totalGasto = 0, totalPago = 0, totalPendente = 0, totalCredito = 0;
+        for (const v of vendas) {
+          const tot = this.totalVenda(v);
+          totalGasto += tot;
+          totalPago += v.valorPago ?? 0;
+          if ((v.valorPago ?? 0) < tot) totalPendente += tot - (v.valorPago ?? 0);
+        }
+        if (totalPago > totalGasto) totalCredito = totalPago - totalGasto;
+
+        return { ...grupo, vendas, totalGasto, totalPago, totalPendente, totalCredito };
+      })
+      .filter((g): g is GrupoCliente => g !== null);
+  }
+
+  limparFiltros() {
+    this.filtroMes = 0;
+    this.filtroAno = 0;
+    this.filtroStatus = '';
+  }
 
   constructor(
     private vendaService: VendaService,
