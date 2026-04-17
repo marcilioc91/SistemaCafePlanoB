@@ -75,6 +75,10 @@ export class CadastroModal {
     return cpfValido(this.conta.cpf);
   }
 
+  get isEmailValido(): boolean {
+    return emailValido(this.conta.email);
+  }
+
   erro = '';
 
   constructor(
@@ -118,6 +122,7 @@ export class CadastroModal {
       nome: this.conta.nome,
       cpf: this.conta.cpf,
       email: this.conta.email,
+      telefone: this.conta.telefone || undefined,
       usuario: this.conta.usuario,
       senha: this.conta.senha,
       obs: this.conta.obs || undefined

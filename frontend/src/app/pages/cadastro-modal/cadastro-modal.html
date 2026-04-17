@@ -8,8 +8,8 @@
             <h5>{{ modoCliente ? 'Dados do cliente' : 'Tela 1 de 2' }}</h5>
 
             <mat-form-field class="full-width">
-                <mat-label>Nome Completo</mat-label>
-                <input matInput [(ngModel)]="conta.nome" name="nome">
+                <mat-label>Nome e Sobrenome</mat-label>
+                <input matInput [(ngModel)]="conta.nome" name="nome" (ngModelChange)="conta.nome = $event.toUpperCase()">
             </mat-form-field>
 
             <mat-form-field class="full-width">
@@ -20,8 +20,8 @@
 
             @if (!modoCliente) {
             <mat-form-field class="full-width">
-                <mat-label>Email</mat-label>
-                <input matInput [(ngModel)]="conta.email" name="email">
+                <mat-label>E-mail</mat-label>
+                <input matInput [(ngModel)]="conta.email" name="email" type="email">
             </mat-form-field>
             }
 
@@ -37,14 +37,14 @@
 
             @if (!modoCliente) {
             <button type="button" mat-raised-button color="primary" (click)="nextStep()"
-                [disabled]="!conta.nome || !conta.cpf || !conta.email">
+                [disabled]="!conta.nome || (!conta.cpf || !isCpfValido) || !conta.email || !isEmailValido">
                 Próximo
             </button>
             }
 
             @if (modoCliente) {
             <button type="button" mat-raised-button color="primary" (click)="salvar()"
-                [disabled]="!conta.nome || (!conta.cpf || !isCpfValido)">
+                [disabled]="!conta.nome || (!conta.cpf || !isCpfValido) || !conta.email || !isEmailValido">
                 Salvar
             </button>
             }

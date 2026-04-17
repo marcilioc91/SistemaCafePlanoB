@@ -45,16 +45,6 @@
   gap: 4px;
 }
 
-.pendente {
-  color: #f57c00;
-  font-weight: 600;
-}
-
-.pago {
-  color: #2e7d32;
-  font-weight: 600;
-}
-
 .uppercase {
   text-transform: uppercase;
 }
@@ -63,4 +53,19 @@
   text-align: center;
   color: #888;
   margin-top: 40px;
+}
+
+.total {
+  color: #0052a5;
+  font-weight: 600;
+}
+
+.pendente {
+  color: #f57c00;
+  font-weight: 600;
+}
+
+.pago {
+  color: #2e7d32;
+  font-weight: 600;
 }

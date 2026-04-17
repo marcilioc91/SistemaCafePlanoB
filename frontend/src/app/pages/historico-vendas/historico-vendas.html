@@ -8,81 +8,93 @@
   </div>
 
   @if (carregando) {
-    <div class="carregando">
-      <mat-icon>hourglass_empty</mat-icon>
-      Carregando...
-    </div>
+  <div class="carregando">
+    <mat-icon>hourglass_empty</mat-icon>
+    Carregando...
+  </div>
   } @else if (grupos.length === 0) {
-    <p class="sem-dados">Nenhuma venda registrada.</p>
+  <p class="sem-dados">Nenhuma venda registrada.</p>
   } @else {
-    <mat-accordion multi>
-      @for (grupo of grupos; track grupo.clienteId) {
-        <mat-expansion-panel class="grupo-panel">
+  <mat-accordion multi>
+    @for (grupo of grupos; track grupo.clienteId) {
+    <mat-expansion-panel class="grupo-panel">
+      <mat-expansion-panel-header>
+        <mat-panel-title class="uppercase">
+          <mat-icon style="margin-right: 8px; font-size:20px; line-height:20px">person</mat-icon>
+          {{ grupo.nomeCliente }}
+        </mat-panel-title>
+        <mat-panel-description>
+          {{ grupo.vendas.length }} venda(s) &nbsp;|&nbsp;
+          <strong class="total">Total: R$ {{ grupo.totalGasto | number:'1.2-2' }}</strong>
+          &nbsp;|&nbsp;
+          <strong class="pago">Pago: R$ {{ grupo.totalPago | number:'1.2-2' }}</strong>
+          <ng-container>
+            @if (grupo.totalPendente > 0 && grupo.totalCredito === 0) {
+            &nbsp;|&nbsp;
+            <strong class="pendente">Pendente: R$ {{ grupo.totalPendente | number:'1.2-2' }}</strong>
+            }
+            @if (grupo.totalCredito > 0) {
+            &nbsp;|&nbsp;
+            <strong class="pago">Crédito: R$ {{ grupo.totalCredito | number:'1.2-2' }}</strong>
+            }
+          </ng-container>
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      <mat-accordion>
+        @for (venda of grupo.vendas; track venda.id) {
+        <mat-expansion-panel>
           <mat-expansion-panel-header>
-            <mat-panel-title class="uppercase">
-              <mat-icon style="margin-right: 8px; font-size:20px; line-height:20px">person</mat-icon>
-              {{ grupo.nomeCliente }}
-            </mat-panel-title>
+            <mat-panel-title>Venda #{{ venda.id }}</mat-panel-title>
             <mat-panel-description>
-              {{ grupo.vendas.length }} venda(s) &nbsp;|&nbsp;
-              <strong>Total acumulado: R$ {{ grupo.totalGasto | number:'1.2-2' }}</strong>
+              {{ venda.data_venda | date:'dd/MM/yyyy HH:mm' }}
+              &nbsp;|&nbsp; R$ {{ totalVenda(venda) | number:'1.2-2' }}
+              &nbsp;|&nbsp; {{ labelPagamento(venda.formaPagamento) }}
             </mat-panel-description>
           </mat-expansion-panel-header>
 
-          <mat-accordion>
-            @for (venda of grupo.vendas; track venda.id) {
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  <mat-panel-title>Venda #{{ venda.id }}</mat-panel-title>
-                  <mat-panel-description>
-                    {{ venda.data_venda | date:'dd/MM/yyyy HH:mm' }}
-                    &nbsp;|&nbsp; R$ {{ totalVenda(venda) | number:'1.2-2' }}
-                    &nbsp;|&nbsp; {{ labelPagamento(venda.formaPagamento) }}
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
+          <table mat-table [dataSource]="venda.itens" class="itens-tabela">
+            <ng-container matColumnDef="produto">
+              <th mat-header-cell *matHeaderCellDef>Produto</th>
+              <td mat-cell *matCellDef="let item">{{ item.produto.nome }}</td>
+            </ng-container>
+            <ng-container matColumnDef="quantidade">
+              <th mat-header-cell *matHeaderCellDef>Qtd.</th>
+              <td mat-cell *matCellDef="let item">{{ item.quantidade }}</td>
+            </ng-container>
+            <ng-container matColumnDef="precoUnitario">
+              <th mat-header-cell *matHeaderCellDef>Preço Unit.</th>
+              <td mat-cell *matCellDef="let item">R$ {{ item.precoUnitario | number:'1.2-2' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="subtotal">
+              <th mat-header-cell *matHeaderCellDef>Subtotal</th>
+              <td mat-cell *matCellDef="let item">R$ {{ item.quantidade * item.precoUnitario | number:'1.2-2' }}</td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="colunasItens"></tr>
+            <tr mat-row *matRowDef="let row; columns: colunasItens;"></tr>
+          </table>
 
-                <table mat-table [dataSource]="venda.itens" class="itens-tabela">
-                  <ng-container matColumnDef="produto">
-                    <th mat-header-cell *matHeaderCellDef>Produto</th>
-                    <td mat-cell *matCellDef="let item">{{ item.produto.nome }}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="quantidade">
-                    <th mat-header-cell *matHeaderCellDef>Qtd.</th>
-                    <td mat-cell *matCellDef="let item">{{ item.quantidade }}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="precoUnitario">
-                    <th mat-header-cell *matHeaderCellDef>Preço Unit.</th>
-                    <td mat-cell *matCellDef="let item">R$ {{ item.precoUnitario | number:'1.2-2' }}</td>
-                  </ng-container>
-                  <ng-container matColumnDef="subtotal">
-                    <th mat-header-cell *matHeaderCellDef>Subtotal</th>
-                    <td mat-cell *matCellDef="let item">R$ {{ item.quantidade * item.precoUnitario | number:'1.2-2' }}</td>
-                  </ng-container>
-                  <tr mat-header-row *matHeaderRowDef="colunasItens"></tr>
-                  <tr mat-row *matRowDef="let row; columns: colunasItens;"></tr>
-                </table>
+          <div class="rodape-venda">
+            <span>Atendido por: <strong>{{venda.cliente.pessoa.nome}}</strong></span>
+            <div class="rodape-pagamento">
+              @if ((venda.valorPago ?? 0) < totalVenda(venda)) { <span
+                class="pendente">
+                Pendente: R$ {{ (totalVenda(venda) - (venda.valorPago ?? 0)) | number:'1.2-2' }}
+                </span>
+                } @else {
+                <span class="pago">Pago</span>
+                }
+                <button mat-icon-button (click)="abrirEdicaoPagamento(venda)" title="Editar pagamento">
+                  <mat-icon>edit</mat-icon>
+                </button>
+            </div>
+          </div>
 
-                <div class="rodape-venda">
-                  <span>Atendido por: <strong>{{ venda.usuario.usuarioLogin }}</strong></span>
-                  <div class="rodape-pagamento">
-                    @if (venda.formaPagamento === 'PENDENTE' || (venda.valorPago ?? 0) < totalVenda(venda)) {
-                      <span class="pendente">
-                        Pendente: R$ {{ (totalVenda(venda) - (venda.valorPago ?? 0)) | number:'1.2-2' }}
-                      </span>
-                    } @else {
-                      <span class="pago">Pago</span>
-                    }
-                    <button mat-icon-button (click)="abrirEdicaoPagamento(venda)" title="Editar pagamento">
-                      <mat-icon>edit</mat-icon>
-                    </button>
-                  </div>
-                </div>
-
-              </mat-expansion-panel>
-            }
-          </mat-accordion>
         </mat-expansion-panel>
-      }
-    </mat-accordion>
+        }
+      </mat-accordion>
+    </mat-expansion-panel>
+    }
+  </mat-accordion>
   }
 </div>

@@ -18,6 +18,9 @@ interface GrupoCliente {
   clienteId: number;
   nomeCliente: string;
   totalGasto: number;
+  totalPendente: number;
+  totalCredito: number;
+  totalPago: number;
   vendas: VendaResposta[];
 }
 
@@ -38,7 +41,8 @@ export class PagamentoDialog {
     { valor: 'PIX', label: 'PIX' },
     { valor: 'CARTAO_CREDITO', label: 'Cartão de Crédito' },
     { valor: 'CARTAO_DEBITO', label: 'Cartão de Débito' },
-    { valor: 'PENDENTE', label: 'Deixar Pendente' },
+    { valor: 'VOUCHER', label: 'Voucher' },
+    { valor: 'PENDENTE', label: 'Deixar Pendente' }
   ];
 
   constructor(
@@ -122,13 +126,29 @@ export class HistoricoVendas implements OnInit {
           clienteId: id,
           nomeCliente: venda.cliente.pessoa.nome,
           totalGasto: 0,
+          totalPendente: 0,
+          totalCredito: 0,
+          totalPago: 0,
+
           vendas: [],
         });
       }
       const grupo = mapa.get(id)!;
       grupo.vendas.push(venda);
       grupo.totalGasto += this.totalVenda(venda);
+      grupo.totalPago += venda.valorPago ?? 0;
+      if (venda.formaPagamento === 'PENDENTE' || (venda.valorPago ?? 0) < this.totalVenda(venda)) {
+        grupo.totalPendente += (this.totalVenda(venda) - (venda.valorPago ?? 0));
+      }
     }
+
+    for (const grupo of mapa.values()) {
+      if (grupo.totalPago > grupo.totalGasto) {
+        grupo.totalCredito = Math.max(0, grupo.totalPago - grupo.totalGasto);
+      }
+
+    }
+
     return Array.from(mapa.values())
       .sort((a, b) => b.totalGasto - a.totalGasto);
   }
@@ -157,8 +177,8 @@ export class HistoricoVendas implements OnInit {
       if (!resultado) return;
       venda.formaPagamento = resultado.formaPagamento;
       venda.valorPago = resultado.valorPago;
+      this.carregar();
       this.snackBar.open('Pagamento atualizado!', 'Fechar', { duration: 3000 });
-      this.cdr.detectChanges();
     });
   }
 }

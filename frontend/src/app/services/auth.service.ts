@@ -6,6 +6,7 @@ export interface CadastroRequest {
   nome: string;
   cpf: string;
   email: string;
+  telefone?: string;
   usuario: string;
   senha: string;
   obs?: string;

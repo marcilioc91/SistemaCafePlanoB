@@ -81,10 +81,11 @@ export class VendaConfirmacaoDialog {
   styleUrl: './vendas.css',
 })
 export class Vendas implements OnInit {
-  produtos: Produto[] = [];
+  produtos: any[] = [];
   clientes: Cliente[] = [];
   carrinho: ItemCarrinho[] = [];
   clienteSelecionado: Cliente | null = null;
+  loading = true;
 
   colunasProdutos = ['nome', 'preco', 'estoque', 'acoes'];
   colunasCarrinho = ['produto', 'preco', 'quantidade', 'subtotal', 'acoes'];
@@ -101,8 +102,14 @@ export class Vendas implements OnInit {
 
   ngOnInit(): void {
     this.produtoService.listar().subscribe({
-      next: res => this.produtos = res,
-      error: () => this.snackBar.open('Erro ao carregar produtos.', 'Fechar', { duration: 3000 })
+      next: res => {
+        this.produtos = res;
+        this.loading = false;
+      },
+      error: () => {
+        this.snackBar.open('Erro ao carregar produtos.', 'Fechar', { duration: 3000 });
+        this.loading = false;
+      }
     });
     this.clienteService.listar().subscribe({
       next: res => this.clientes = res,
