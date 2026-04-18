@@ -35,16 +35,20 @@ public class UsuarioService {
 
     @Transactional
     public Usuario cadastrar(CadastroRequestDTO dto) {
-        String cpfLimpo = dto.getCpf() == null ? "" : dto.getCpf().replaceAll("[^0-9]", "");
-
-        if (!ValidacaoUtil.cpfValido(cpfLimpo)) {
-            throw new IllegalArgumentException("CPF inválido.");
+        String cpf = dto.getCpf();
+        String cpfLimpo = null;
+        if (cpf != null && !cpf.isBlank()) {
+            cpfLimpo = cpf.replaceAll("[^0-9]", "");
+            if (!ValidacaoUtil.cpfValido(cpfLimpo)) {
+                throw new IllegalArgumentException("CPF inválido.");
+            }
+            if (pessoaRepository.existsByCpf(cpfLimpo)) {
+                throw new IllegalArgumentException("CPF já cadastrado.");
+            }
         }
+
         if (!ValidacaoUtil.emailValido(dto.getEmail())) {
             throw new IllegalArgumentException("E-mail inválido.");
-        }
-        if (pessoaRepository.existsByCpf(cpfLimpo)) {
-            throw new IllegalArgumentException("CPF já cadastrado.");
         }
 
         Pessoa pessoa = new Pessoa();

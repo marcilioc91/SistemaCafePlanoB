@@ -33,12 +33,17 @@ public class ClienteService {
 
     @Transactional
     public Cliente salvar(Cliente cliente) {
-        String cpfLimpo = limparCpf(cliente.getPessoa().getCpf());
-        validarCpf(cpfLimpo);
-        if (pessoaRepository.existsByCpf(cpfLimpo)) {
-            throw new IllegalArgumentException("CPF já cadastrado.");
+        String cpf = cliente.getPessoa().getCpf();
+        if (cpf != null && !cpf.isBlank()) {
+            String cpfLimpo = limparCpf(cpf);
+            validarCpf(cpfLimpo);
+            if (pessoaRepository.existsByCpf(cpfLimpo)) {
+                throw new IllegalArgumentException("CPF já cadastrado.");
+            }
+            cliente.getPessoa().setCpf(cpfLimpo);
+        } else {
+            cliente.getPessoa().setCpf(null);
         }
-        cliente.getPessoa().setCpf(cpfLimpo);
         Pessoa pessoa = pessoaRepository.save(cliente.getPessoa());
         cliente.setPessoa(pessoa);
         return repository.save(cliente);
@@ -50,14 +55,19 @@ public class ClienteService {
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
         Pessoa pessoa = existente.getPessoa();
 
-        String cpfLimpo = limparCpf(clienteAtualizado.getPessoa().getCpf());
-        validarCpf(cpfLimpo);
-        if (pessoaRepository.existsByCpfAndIdNot(cpfLimpo, pessoa.getId())) {
-            throw new IllegalArgumentException("CPF já cadastrado para outro cliente.");
+        String cpf = clienteAtualizado.getPessoa().getCpf();
+        if (cpf != null && !cpf.isBlank()) {
+            String cpfLimpo = limparCpf(cpf);
+            validarCpf(cpfLimpo);
+            if (pessoaRepository.existsByCpfAndIdNot(cpfLimpo, pessoa.getId())) {
+                throw new IllegalArgumentException("CPF já cadastrado para outro cliente.");
+            }
+            pessoa.setCpf(cpfLimpo);
+        } else {
+            pessoa.setCpf(null);
         }
 
         pessoa.setNome(clienteAtualizado.getPessoa().getNome());
-        pessoa.setCpf(cpfLimpo);
         pessoa.setTelefone(clienteAtualizado.getPessoa().getTelefone());
         pessoaRepository.save(pessoa);
         existente.setObs(clienteAtualizado.getObs());

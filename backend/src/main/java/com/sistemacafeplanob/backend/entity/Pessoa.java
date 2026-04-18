@@ -11,7 +11,6 @@ public class Pessoa {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String nome;
-    @Column(unique = true, nullable = false)
     private String cpf;
     private String telefone;
 }

@@ -19,7 +19,7 @@
     @if (erro) { <p style="color: red; font-size: 0.85rem">{{ erro }}</p> }
     <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
         <button mat-button (click)="fechar()">Cancelar</button>
-        <button mat-raised-button color="primary" [disabled]="!form.nome || !form.cpf"
+        <button mat-raised-button color="primary" [disabled]="!form.nome"
             (click)="salvar()">Salvar</button>
     </div>
 </div>

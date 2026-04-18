@@ -63,7 +63,7 @@ export class CadastroModal {
   }
 
   validarCpf() {
-    if (!cpfValido(this.conta.cpf)) {
+    if (this.conta.cpf && !cpfValido(this.conta.cpf)) {
       this.erro = 'CPF inválido.';
       this.cdr.markForCheck();
     } else {
@@ -72,7 +72,7 @@ export class CadastroModal {
   }
 
   get isCpfValido(): boolean {
-    return cpfValido(this.conta.cpf);
+    return !this.conta.cpf || cpfValido(this.conta.cpf);
   }
 
   get isEmailValido(): boolean {
@@ -102,7 +102,7 @@ export class CadastroModal {
   }
 
   private validarCamposComuns(): boolean {
-    if (!cpfValido(this.conta.cpf)) {
+    if (this.conta.cpf && !cpfValido(this.conta.cpf)) {
       this.erro = 'CPF inválido.';
       this.cdr.markForCheck();
       return false;

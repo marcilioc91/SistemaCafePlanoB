@@ -128,7 +128,7 @@ export class HistoricoClienteDialog implements OnInit {
 })
 export class Clientes implements OnInit {
   clientes: Cliente[] = [];
-  colunas = ['nome', 'cpf', 'telefone', 'obs', 'acoes'];
+  colunas = ['nome', 'telefone', 'obs', 'acoes'];
 
   constructor(
     private clienteService: ClienteService,
@@ -196,7 +196,7 @@ export class Clientes implements OnInit {
     ref.afterClosed().subscribe((confirmado: boolean) => {
       if (!confirmado) return;
       const usuarioLogado = this.authService.getUsuarioLogado();
-      const eOProprio = usuarioLogado?.pessoa?.cpf === cliente.pessoa.cpf;
+      const eOProprio = !!usuarioLogado?.pessoa?.id && usuarioLogado.pessoa.id === cliente.pessoa.id;
       this.clienteService.excluir(cliente.id!).subscribe({
         next: () => {
           this.snackBar.open('Cliente excluído.', 'Fechar', { duration: 3000 });

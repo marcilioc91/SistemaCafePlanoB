@@ -20,7 +20,7 @@ export interface VendaItemResposta {
 
 export interface VendaResposta {
   id: number;
-  cliente: { id: number; pessoa: { nome: string; cpf: string } };
+  cliente: { id: number; pessoa: { id?: number; nome: string; cpf?: string } };
   usuario: { id: number; usuarioLogin: string };
   itens: VendaItemResposta[];
   data_venda: string;

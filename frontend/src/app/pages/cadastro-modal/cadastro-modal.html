@@ -37,14 +37,14 @@
 
             @if (!modoCliente) {
             <button type="button" mat-raised-button color="primary" (click)="nextStep()"
-                [disabled]="!conta.nome || (!conta.cpf || !isCpfValido) || !conta.email || !isEmailValido">
+                [disabled]="!conta.nome || !isCpfValido || !conta.email || !isEmailValido">
                 Próximo
             </button>
             }
 
             @if (modoCliente) {
             <button type="button" mat-raised-button color="primary" (click)="salvar()"
-                [disabled]="!conta.nome || (!conta.cpf || !isCpfValido) || !conta.email || !isEmailValido">
+                [disabled]="!conta.nome || !isCpfValido">
                 Salvar
             </button>
             }

@@ -4,7 +4,7 @@ import { LoginRequest } from '../models/usuario';
 
 export interface CadastroRequest {
   nome: string;
-  cpf: string;
+  cpf?: string;
   email: string;
   telefone?: string;
   usuario: string;
