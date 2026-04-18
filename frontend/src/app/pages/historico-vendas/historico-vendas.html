@@ -12,7 +12,7 @@
       <mat-label>Mês</mat-label>
       <mat-select [(ngModel)]="filtroMes">
         @for (m of meses; track m.valor) {
-          <mat-option [value]="m.valor">{{ m.label }}</mat-option>
+        <mat-option [value]="m.valor">{{ m.label }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -21,7 +21,7 @@
       <mat-label>Ano</mat-label>
       <mat-select [(ngModel)]="filtroAno">
         @for (a of anos; track a.valor) {
-          <mat-option [value]="a.valor">{{ a.label }}</mat-option>
+        <mat-option [value]="a.valor">{{ a.label }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
@@ -36,9 +36,9 @@
     </mat-form-field>
 
     @if (filtroMes || filtroAno || filtroStatus) {
-      <button mat-icon-button (click)="limparFiltros()" matTooltip="Limpar filtros">
-        <mat-icon>filter_alt_off</mat-icon>
-      </button>
+    <button mat-icon-button (click)="limparFiltros()" matTooltip="Limpar filtros">
+      <mat-icon>filter_alt_off</mat-icon>
+    </button>
     }
   </div>
 
@@ -112,10 +112,9 @@
           </table>
 
           <div class="rodape-venda">
-            <span>Atendido por: <strong>{{venda.cliente.pessoa.nome}}</strong></span>
+            <span>Atendido por: <strong>{{venda.usuario.usuarioLogin}}</strong></span>
             <div class="rodape-pagamento">
-              @if ((venda.valorPago ?? 0) < totalVenda(venda)) { <span
-                class="pendente">
+              @if ((venda.valorPago ?? 0) < totalVenda(venda)) { <span class="pendente">
                 Pendente: R$ {{ (totalVenda(venda) - (venda.valorPago ?? 0)) | number:'1.2-2' }}
                 </span>
                 } @else {

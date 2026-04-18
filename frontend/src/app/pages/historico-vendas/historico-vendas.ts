@@ -3,10 +3,10 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatFormFieldModule, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelectModule, MatSelect } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -72,20 +72,22 @@ export class PagamentoDialog {
 // ── Página de histórico ───────────────────────────────────────────────────────
 @Component({
   selector: 'app-historico-vendas',
-  standalone: true,
   imports: [
     CommonModule,
     DatePipe,
-    FormsModule,
     MatTableModule,
     MatButtonModule,
     MatIconModule,
     MatExpansionModule,
     MatDialogModule,
+    RouterLink,
+    MatFormField,
+    MatSelect,
+    MatLabel,
     MatFormFieldModule,
     MatSelectModule,
     MatTooltipModule,
-    RouterLink,
+    FormsModule,
   ],
   templateUrl: './historico-vendas.html',
   styleUrl: './historico-vendas.css',
@@ -133,28 +135,38 @@ export class HistoricoVendas implements OnInit {
           vendas = vendas.filter(v => {
             const d = new Date(v.data_venda);
             return (!this.filtroMes || d.getMonth() + 1 === this.filtroMes) &&
-                   (!this.filtroAno || d.getFullYear() === this.filtroAno);
+              (!this.filtroAno || d.getFullYear() === this.filtroAno);
           });
-        }
-
-        if (this.filtroStatus === 'PENDENTE') {
-          vendas = vendas.filter(v => (v.valorPago ?? 0) < this.totalVenda(v));
-        } else if (this.filtroStatus === 'PAGO') {
-          vendas = vendas.filter(v => (v.valorPago ?? 0) >= this.totalVenda(v));
         }
 
         if (!vendas.length) return null;
 
         let totalGasto = 0, totalPago = 0, totalPendente = 0, totalCredito = 0;
+
         for (const v of vendas) {
           const tot = this.totalVenda(v);
-          totalGasto += tot;
-          totalPago += v.valorPago ?? 0;
-          if ((v.valorPago ?? 0) < tot) totalPendente += tot - (v.valorPago ?? 0);
-        }
-        if (totalPago > totalGasto) totalCredito = totalPago - totalGasto;
+          const pago = v.valorPago ?? 0;
 
-        return { ...grupo, vendas, totalGasto, totalPago, totalPendente, totalCredito };
+          totalGasto += tot;
+          totalPago += pago;
+
+          if (pago < tot)
+            totalPendente += tot - pago;
+        }
+        if (totalPago > totalGasto)
+          totalCredito = totalPago - totalGasto;
+
+        if (this.filtroStatus === 'PENDENTE' && !(totalPago < totalGasto)) return null;
+        if (this.filtroStatus === 'PAGO' && !(totalPago >= totalGasto)) return null;
+
+        return {
+          ...grupo,
+          vendas: vendas,
+          totalGasto,
+          totalPago,
+          totalPendente,
+          totalCredito
+        };
       })
       .filter((g): g is GrupoCliente => g !== null);
   }
@@ -170,7 +182,7 @@ export class HistoricoVendas implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.carregar();
