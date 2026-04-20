@@ -8,6 +8,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
+import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Produto } from '../../models/produto';
@@ -75,6 +76,7 @@ export class VendaConfirmacaoDialog {
     MatFormFieldModule,
     MatTableModule,
     MatInputModule,
+    MatAutocompleteModule,
     MatDialogModule,
   ],
   templateUrl: './vendas.html',
@@ -83,8 +85,10 @@ export class VendaConfirmacaoDialog {
 export class Vendas implements OnInit {
   produtos: any[] = [];
   clientes: Cliente[] = [];
+  filteredClientes: Cliente[] = [];
   carrinho: ItemCarrinho[] = [];
   clienteSelecionado: Cliente | null = null;
+  clienteSearchText = '';
   loading = true;
 
   colunasProdutos = ['nome', 'preco', 'estoque', 'acoes'];
@@ -112,9 +116,24 @@ export class Vendas implements OnInit {
       }
     });
     this.clienteService.listar().subscribe({
-      next: res => this.clientes = res,
+      next: res => {
+        this.clientes = res;
+        this.filteredClientes = res;
+      },
       error: () => this.snackBar.open('Erro ao carregar clientes.', 'Fechar', { duration: 3000 })
     });
+  }
+
+  filtrarClientes(valor: string) {
+    const filtro = (valor ?? '').toLowerCase();
+    this.filteredClientes = this.clientes.filter(c =>
+      c.pessoa.nome.toLowerCase().includes(filtro)
+    );
+    if (!valor) this.clienteSelecionado = null;
+  }
+
+  onClienteSelecionado(event: MatAutocompleteSelectedEvent) {
+    this.clienteSelecionado = this.clientes.find(c => c.pessoa.nome === event.option.value) ?? null;
   }
 
   adicionar(produto: Produto) {

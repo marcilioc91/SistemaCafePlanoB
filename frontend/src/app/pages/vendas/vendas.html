@@ -10,17 +10,24 @@
 
   <mat-form-field class="full-width">
     <mat-label>Cliente</mat-label>
-    <mat-select [(ngModel)]="clienteSelecionado">
-      @for (c of clientes; track c.id) {
-      <mat-option [value]="c">{{ c.pessoa.nome }}</mat-option>
+    <input matInput
+           [matAutocomplete]="autoCliente"
+           [(ngModel)]="clienteSearchText"
+           (ngModelChange)="filtrarClientes($event)"
+           placeholder="Digite o nome do cliente">
+    <mat-autocomplete #autoCliente="matAutocomplete" (optionSelected)="onClienteSelecionado($event)">
+      @for (c of filteredClientes; track c.id) {
+        <mat-option [value]="c.pessoa.nome">{{ c.pessoa.nome }}</mat-option>
       }
-    </mat-select>
+    </mat-autocomplete>
   </mat-form-field>
 
   <h3>Produtos disponíveis</h3>
 
-  @if (produtos.length === 0) {
-  <p class="sem-dados">Selecione um cliente para ver os produtos disponíveis.</p>
+  @if (loading) {
+  <p class="sem-dados">Carregando produtos...</p>
+  } @else if (produtos.length === 0) {
+  <p class="sem-dados">Nenhum produto cadastrado.</p>
   } @else {
   <table mat-table [dataSource]="produtos" class="mat-elevation-z2 produtos-tabela">
 
