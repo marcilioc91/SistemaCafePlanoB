@@ -59,7 +59,7 @@ export class ClienteEditDialog {
     const { pessoa, obs } = data.cliente;
     this.form = {
       nome: pessoa.nome,
-      cpf: pessoa.cpf,
+      cpf: pessoa.cpf ?? '',
       telefone: pessoa.telefone ?? '',
       obs: obs ?? '',
     };
@@ -213,4 +213,20 @@ export class Clientes implements OnInit {
       });
     });
   }
+
+  formatarTelefone(tel?: string): string {
+  if (!tel) return '—';
+
+  const v = tel.replace(/\D/g, '');
+
+  if (v.length === 11) {
+    return `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+  }
+
+  if (v.length === 10) {
+    return `(${v.slice(0,2)}) ${v.slice(2,6)}-${v.slice(6)}`;
+  }
+
+  return tel;
+}
 }

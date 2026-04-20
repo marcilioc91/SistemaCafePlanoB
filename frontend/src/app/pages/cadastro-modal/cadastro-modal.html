@@ -8,7 +8,7 @@
             <h5>{{ modoCliente ? 'Dados do cliente' : 'Tela 1 de 2' }}</h5>
 
             <mat-form-field class="full-width">
-                <mat-label>Nome e Sobrenome</mat-label>
+                <mat-label>Nome Completo</mat-label>
                 <input matInput [(ngModel)]="conta.nome" name="nome" (ngModelChange)="conta.nome = $event.toUpperCase()">
             </mat-form-field>
 
