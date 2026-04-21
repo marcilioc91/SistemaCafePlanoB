@@ -17,13 +17,21 @@ import { AuthService } from '../../services/auth.service';
 import { ClienteService } from '../../services/cliente.service';
 import { VendaService } from '../../services/venda.service';
 import { CadastroModal } from '../cadastro-modal/cadastro-modal';
+import { formatarTelefone } from '../../utils/utils';
 
 // ── Diálogo de confirmação ────────────────────────────────────────────────────
 @Component({
   selector: 'app-confirm-dialog',
   standalone: true,
   imports: [MatButtonModule, MatDialogModule],
-  templateUrl: './cliente-dialog-confirm.html',
+  template: `
+    <h2 mat-dialog-title>{{ data.titulo }}</h2>
+    <mat-dialog-content>{{ data.mensagem }}</mat-dialog-content>
+    <mat-dialog-actions align="end">
+      <button mat-stroked-button (click)="dialogRef.close(false)">Não</button>
+      <button mat-raised-button color="warn" (click)="dialogRef.close(true)">Sim</button>
+    </mat-dialog-actions>
+  `,
 })
 export class ConfirmDialog {
   constructor(
@@ -182,11 +190,9 @@ export class Clientes implements OnInit {
     const ref = this.dialog.open(ConfirmDialog, {
       width: '380px',
       data: {
-        titulo: 'Confirmação de Exclusão',
-        mensagem: `Deseja excluir "${cliente.pessoa.nome}"?<br><br>
-        Todas as vendas, o usuário e os dados pessoais vinculados serão removidos permanentemente.`,
+        titulo: 'Excluir cliente',
+        mensagem: `Deseja excluir "${cliente.pessoa.nome}"? Todas as vendas, o usuário e os dados pessoais vinculados serão removidos permanentemente.`,
       },
-      panelClass: 'confirm-dialog-panel'
     });
     ref.afterClosed().subscribe((confirmado: boolean) => {
       if (!confirmado) return;
@@ -208,20 +214,5 @@ export class Clientes implements OnInit {
       });
     });
   }
-
-  formatarTelefone(tel?: string): string {
-    if (!tel) return '—';
-
-    const v = tel.replace(/\D/g, '');
-
-    if (v.length === 11) {
-      return `(${v.slice(0, 2)}) ${v.slice(2, 7)}-${v.slice(7)}`;
-    }
-
-    if (v.length === 10) {
-      return `(${v.slice(0, 2)}) ${v.slice(2, 6)}-${v.slice(6)}`;
-    }
-
-    return tel;
-  }
+  formatarTelefone = formatarTelefone;
 }

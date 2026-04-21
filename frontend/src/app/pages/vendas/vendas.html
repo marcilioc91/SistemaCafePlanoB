@@ -17,7 +17,7 @@
            placeholder="Digite o nome do cliente">
     <mat-autocomplete #autoCliente="matAutocomplete" (optionSelected)="onClienteSelecionado($event)">
       @for (c of filteredClientes; track c.id) {
-        <mat-option [value]="c.pessoa.nome">{{ c.pessoa.nome }}</mat-option>
+        <mat-option [value]="c.pessoa.nome">{{ c.pessoa.nome + ' --- ' + formatarTelefone(c.pessoa.telefone) }}</mat-option>
       }
     </mat-autocomplete>
   </mat-form-field>

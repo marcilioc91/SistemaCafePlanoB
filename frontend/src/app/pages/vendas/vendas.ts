@@ -17,6 +17,7 @@ import { ProdutoService } from '../../services/produto.service';
 import { VendaService } from '../../services/venda.service';
 import { ClienteService } from '../../services/cliente.service';
 import { AuthService } from '../../services/auth.service';
+import { formatarTelefone } from '../../utils/utils';
 
 interface ItemCarrinho {
   produto: Produto;
@@ -52,7 +53,7 @@ export class VendaConfirmacaoDialog {
   constructor(
     private dialogRef: MatDialogRef<VendaConfirmacaoDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DadosConfirmacao
-  ) {}
+  ) { }
 
   confirmar() {
     const vPago = this.formaPagamento === 'PENDENTE' ? 0 : this.valorPago;
@@ -83,6 +84,7 @@ export class VendaConfirmacaoDialog {
   styleUrl: './vendas.css',
 })
 export class Vendas implements OnInit {
+  formatarTelefone = formatarTelefone;
   produtos: any[] = [];
   clientes: Cliente[] = [];
   filteredClientes: Cliente[] = [];
@@ -102,7 +104,7 @@ export class Vendas implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.produtoService.listar().subscribe({
