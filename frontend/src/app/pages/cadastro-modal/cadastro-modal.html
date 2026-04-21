@@ -5,7 +5,7 @@
 
         @if (step === 0) {
         <div>
-            <h5>{{ modoCliente ? 'Dados do cliente' : 'Tela 1 de 2' }}</h5>
+            <h5>{{ modoCliente ? '' : 'Tela 1 de 2' }}</h5>
 
             <mat-form-field class="full-width">
                 <mat-label>Nome Completo</mat-label>
@@ -37,14 +37,14 @@
 
             @if (!modoCliente) {
             <button type="button" mat-raised-button color="primary" (click)="nextStep()"
-                [disabled]="!conta.nome || !isCpfValido || !conta.email || !isEmailValido">
+                [disabled]="!conta.nome || !isCpfValido || !conta.email || !conta.telefone || !isEmailValido">
                 Próximo
             </button>
             }
 
             @if (modoCliente) {
             <button type="button" mat-raised-button color="primary" (click)="salvar()"
-                [disabled]="!conta.nome || !isCpfValido">
+                [disabled]="!conta.nome || !isCpfValido || !conta.telefone">
                 Salvar
             </button>
             }

@@ -141,7 +141,7 @@ export class HistoricoVendas implements OnInit {
 
         if (!vendas.length) return null;
 
-        let totalGasto = 0, totalPago = 0, totalPendente = 0, totalCredito = 0;
+        let totalGasto = 0, totalPago = 0;
 
         for (const v of vendas) {
           const tot = this.totalVenda(v);
@@ -149,15 +149,13 @@ export class HistoricoVendas implements OnInit {
 
           totalGasto += tot;
           totalPago += pago;
-
-          if (pago < tot)
-            totalPendente += tot - pago;
         }
-        if (totalPago > totalGasto)
-          totalCredito = totalPago - totalGasto;
+        const totalPendente = Math.max(0, totalGasto - totalPago);
+        const totalCredito = Math.max(0, totalPago - totalGasto);
 
         if (this.filtroStatus === 'PENDENTE' && !(totalPago < totalGasto)) return null;
-        if (this.filtroStatus === 'PAGO' && !(totalPago >= totalGasto)) return null;
+        if (this.filtroStatus === 'PAGO' && !(totalPago === totalGasto)) return null;
+        if (this.filtroStatus === 'CREDITO' && totalCredito <= 0) return null;
 
         return {
           ...grupo,

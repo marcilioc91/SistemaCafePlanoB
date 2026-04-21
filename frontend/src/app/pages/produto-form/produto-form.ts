@@ -18,34 +18,7 @@ import { ProdutoService } from '../../services/produto.service';
   selector: 'app-produto-form-dialog',
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule],
-  template: `
-    <h2 style="padding: 24px 24px 0">{{ modoEdicao ? 'Editar Produto' : 'Novo Produto' }}</h2>
-    <div style="padding: 0 24px 24px; display: flex; flex-direction: column; gap: 4px; min-width: 320px;">
-      <mat-form-field>
-        <mat-label>Nome</mat-label>
-        <input matInput [(ngModel)]="dados.nome" name="nome">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Preço de custo (R$)</mat-label>
-        <input matInput [(ngModel)]="dados.preco_custo" name="preco_custo" type="number" min="0" step="0.01">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Preço (R$)</mat-label>
-        <input matInput [(ngModel)]="dados.preco" name="preco" type="number" min="0.01" step="0.01">
-      </mat-form-field>
-      <mat-form-field>
-        <mat-label>Estoque</mat-label>
-        <input matInput [(ngModel)]="dados.estoque" name="estoque" type="number" min="0">
-      </mat-form-field>
-      @if (erro) { <p style="color: red; font-size: 0.85rem">{{ erro }}</p> }
-      <div style="display: flex; gap: 8px; justify-content: flex-end; margin-top: 8px;">
-        <button mat-button (click)="fechar()">Cancelar</button>
-        <button mat-raised-button color="primary"
-          [disabled]="!dados.nome || dados.preco == null || dados.estoque == null"
-          (click)="confirmar()">Salvar</button>
-      </div>
-    </div>
-  `,
+  templateUrl: './produto-form-dialog.html',
 })
 export class ProdutoFormDialog {
   dados: Produto;
@@ -98,14 +71,13 @@ export class ProdutoForm implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit() { this.carregar(); }
 
   carregar() {
     this.produtoService.listar().subscribe(dados => {
       this.produtos = dados;
-      this.cdr.detectChanges();
     });
   }
 

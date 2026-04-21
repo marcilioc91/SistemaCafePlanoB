@@ -1,18 +1,39 @@
 import { Routes } from '@angular/router';
-import { Login } from './pages/login/login';
-import { Home } from './pages/home/home';
-import { Produtos } from './pages/produtos/produtos';
-import { ProdutoForm } from './pages/produto-form/produto-form';
-import { Vendas } from './pages/vendas/vendas';
-import { Clientes } from './pages/clientes/clientes';
-import { HistoricoVendas } from './pages/historico-vendas/historico-vendas';
 
 export const routes: Routes = [
-  { path: '', component: Login },
-  { path: 'home', component: Home },
-  { path: 'clientes', component: Clientes },
-  { path: 'produtos', component: Produtos },
-  { path: 'produto-form', component: ProdutoForm },
-  { path: 'vendas', component: Vendas },
-  { path: 'historico-vendas', component: HistoricoVendas }
+  {
+    path: '',
+    loadComponent: () =>
+      import('./pages/login/login').then(m => m.Login),
+  },
+  {
+    path: 'home',
+    loadComponent: () =>
+      import('./pages/home/home').then(m => m.Home),
+  },
+  {
+    path: 'clientes',
+    loadComponent: () =>
+      import('./pages/clientes/clientes').then(m => m.Clientes),
+  },
+  {
+    path: 'produtos',
+    loadComponent: () =>
+      import('./pages/produtos/produtos').then(m => m.Produtos),
+  },
+  {
+    path: 'produto-form',
+    loadComponent: () =>
+      import('./pages/produto-form/produto-form').then(m => m.ProdutoForm),
+  },
+  {
+    path: 'vendas',
+    loadComponent: () =>
+      import('./pages/vendas/vendas').then(m => m.Vendas),
+  },
+  {
+    path: 'historico-vendas',
+    loadComponent: () =>
+      import('./pages/historico-vendas/historico-vendas').then(m => m.HistoricoVendas),
+  }
 ];

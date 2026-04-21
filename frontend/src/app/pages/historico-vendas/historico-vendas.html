@@ -31,7 +31,8 @@
       <mat-select [(ngModel)]="filtroStatus">
         <mat-option value="">Todos</mat-option>
         <mat-option value="PENDENTE">Pendente</mat-option>
-        <mat-option value="PAGO">Pago</mat-option>
+        <mat-option value="PAGO">Quitado</mat-option>
+        <mat-option value="CREDITO">Crédito</mat-option>
       </mat-select>
     </mat-form-field>
 
@@ -112,7 +113,7 @@
           </table>
 
           <div class="rodape-venda">
-            <span>Atendido por: <strong>{{venda.usuario.usuarioLogin}}</strong></span>
+            <span>Atendido por: <strong>{{venda.usuario.pessoa.nome || venda.usuario.usuarioLogin}}</strong></span>
             <div class="rodape-pagamento">
               @if ((venda.valorPago ?? 0) < totalVenda(venda)) { <span class="pendente">
                 Pendente: R$ {{ (totalVenda(venda) - (venda.valorPago ?? 0)) | number:'1.2-2' }}

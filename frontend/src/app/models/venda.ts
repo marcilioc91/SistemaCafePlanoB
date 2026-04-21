@@ -1,3 +1,5 @@
+import { Pessoa } from "./usuario";
+
 export interface VendaProduto {
   produtoId: number;
   quantidade: number;
@@ -21,9 +23,11 @@ export interface VendaItemResposta {
 export interface VendaResposta {
   id: number;
   cliente: { id: number; pessoa: { id?: number; nome: string; cpf?: string } };
-  usuario: { id: number; usuarioLogin: string };
+  usuario: {
+    pessoa: Pessoa; id: number; usuarioLogin: string
+  };
   itens: VendaItemResposta[];
   data_venda: string;
   formaPagamento: string;
-  valorPago: number;
+  valorPago?: number;
 }

@@ -3,7 +3,9 @@
 <a routerLink="/produto-form">Novo Produto</a>
 
 <ul>
-  <li *ngFor="let p of produtos">
-    {{p.nome}} - R$ {{p.preco}}
+  @for (p of produtos; track p.id) {
+  <li>
+    {{ p.nome }} - R$ {{ p.preco }}
   </li>
+  }
 </ul>
