@@ -1,0 +1,76 @@
+<div class="auditoria-container">
+
+  <div class="auditoria-header">
+    <button mat-icon-button (click)="voltar()" title="Voltar">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="auditoria-titulo">
+      <mat-icon>manage_search</mat-icon>
+      Auditoria do Sistema
+    </h2>
+  </div>
+
+  <div class="auditoria-filtros">
+    <mat-form-field appearance="outline" class="filtro-usuario">
+      <mat-label>Filtrar por usuário</mat-label>
+      <mat-select [(ngModel)]="usuarioSelecionado" (ngModelChange)="filtrar()">
+        <mat-option [value]="null">Todos os usuários</mat-option>
+        <mat-option *ngFor="let u of usuarios" [value]="u.id">{{ u.nome }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-stroked-button (click)="limparFiltro()" *ngIf="usuarioSelecionado">
+      <mat-icon>clear</mat-icon>
+      Limpar filtro
+    </button>
+  </div>
+
+  <p class="auditoria-contagem">{{ logsFiltrados.length }} registro(s)</p>
+
+  <div *ngIf="carregando" class="auditoria-loading">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Carregando registros...</p>
+  </div>
+
+  <ng-container *ngIf="!carregando">
+    <div *ngIf="logsFiltrados.length === 0" class="auditoria-vazio">
+      <mat-icon>inbox</mat-icon>
+      <p>Nenhum registro de auditoria encontrado.</p>
+    </div>
+
+    <div *ngIf="logsFiltrados.length > 0" class="auditoria-tabela-wrapper">
+      <table mat-table [dataSource]="logsFiltrados" class="auditoria-tabela mat-elevation-z2">
+
+        <ng-container matColumnDef="dataHora">
+          <th mat-header-cell *matHeaderCellDef>Data / Hora</th>
+          <td mat-cell *matCellDef="let row" class="col-data">
+            {{ row.dataHora | date:'dd/MM/yyyy HH:mm:ss' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="usuarioNome">
+          <th mat-header-cell *matHeaderCellDef>Usuário</th>
+          <td mat-cell *matCellDef="let row">{{ row.usuarioNome }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="tipoOperacao">
+          <th mat-header-cell *matHeaderCellDef>Operação</th>
+          <td mat-cell *matCellDef="let row">
+            <span class="badge-tipo" [ngClass]="corTipo(row.tipoOperacao)">
+              {{ labelTipo(row.tipoOperacao) }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="descricao">
+          <th mat-header-cell *matHeaderCellDef>Descrição</th>
+          <td mat-cell *matCellDef="let row" class="col-desc">{{ row.descricao }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+      </table>
+    </div>
+  </ng-container>
+
+</div>

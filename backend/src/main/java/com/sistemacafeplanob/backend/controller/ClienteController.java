@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/clientes")
 public class ClienteController {
+
     @Autowired
     private ClienteService service;
 
@@ -20,25 +21,35 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> salvar(@RequestBody Cliente cliente) {
+    public ResponseEntity<?> salvar(
+            @RequestBody Cliente cliente,
+            @RequestHeader(value = "X-Usuario-Id", required = false) Long usuarioId,
+            @RequestHeader(value = "X-Usuario-Nome", required = false) String usuarioNome) {
         try {
-            return ResponseEntity.status(201).body(service.salvar(cliente));
+            return ResponseEntity.status(201).body(service.salvar(cliente, usuarioId, usuarioNome));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> atualizar(@PathVariable Integer id, @RequestBody Cliente cliente) {
+    public ResponseEntity<?> atualizar(
+            @PathVariable Integer id,
+            @RequestBody Cliente cliente,
+            @RequestHeader(value = "X-Usuario-Id", required = false) Long usuarioId,
+            @RequestHeader(value = "X-Usuario-Nome", required = false) String usuarioNome) {
         try {
-            return ResponseEntity.ok(service.atualizar(id, cliente));
+            return ResponseEntity.ok(service.atualizar(id, cliente, usuarioId, usuarioNome));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 
     @DeleteMapping("/{id}")
-    public void excluir(@PathVariable Integer id) {
-        service.excluir(id);
+    public void excluir(
+            @PathVariable Integer id,
+            @RequestHeader(value = "X-Usuario-Id", required = false) Long usuarioId,
+            @RequestHeader(value = "X-Usuario-Nome", required = false) String usuarioNome) {
+        service.excluir(id, usuarioId, usuarioNome);
     }
 }

@@ -35,5 +35,15 @@ export const routes: Routes = [
     path: 'historico-vendas',
     loadComponent: () =>
       import('./pages/historico-vendas/historico-vendas').then(m => m.HistoricoVendas),
-  }
+  },
+  {
+    path: 'relatorio-inventario',
+    loadComponent: () =>
+      import('./pages/relatorio-inventario/relatorio-inventario').then(m => m.RelatorioInventario),
+  },
+  {
+    path: 'auditoria',
+    loadComponent: () =>
+      import('./pages/auditoria/auditoria').then(m => m.Auditoria),
+  },
 ];

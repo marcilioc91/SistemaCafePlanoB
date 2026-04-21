@@ -15,6 +15,7 @@ import java.util.List;
 
 @Service
 public class ClienteService {
+
     @Autowired
     private ClienteRepository repository;
 
@@ -27,12 +28,15 @@ public class ClienteService {
     @Autowired
     private VendaRepository vendaRepository;
 
+    @Autowired
+    private AuditoriaService auditoriaService;
+
     public List<Cliente> listar() {
         return repository.findAll();
     }
 
     @Transactional
-    public Cliente salvar(Cliente cliente) {
+    public Cliente salvar(Cliente cliente, Long usuarioId, String usuarioNome) {
         String cpf = cliente.getPessoa().getCpf();
         if (cpf != null && !cpf.isBlank()) {
             String cpfLimpo = limparCpf(cpf);
@@ -46,11 +50,16 @@ public class ClienteService {
         }
         Pessoa pessoa = pessoaRepository.save(cliente.getPessoa());
         cliente.setPessoa(pessoa);
-        return repository.save(cliente);
+        Cliente salvo = repository.save(cliente);
+
+        auditoriaService.registrar(usuarioId, usuarioNome, "INCLUSAO_CLIENTE",
+                "Cliente '" + salvo.getPessoa().getNome() + "' (ID " + salvo.getId() + ") incluído.");
+
+        return salvo;
     }
 
     @Transactional
-    public Cliente atualizar(Integer id, Cliente clienteAtualizado) {
+    public Cliente atualizar(Integer id, Cliente clienteAtualizado, Long usuarioId, String usuarioNome) {
         Cliente existente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
         Pessoa pessoa = existente.getPessoa();
@@ -71,14 +80,20 @@ public class ClienteService {
         pessoa.setTelefone(clienteAtualizado.getPessoa().getTelefone());
         pessoaRepository.save(pessoa);
         existente.setObs(clienteAtualizado.getObs());
-        return repository.save(existente);
+        Cliente atualizado = repository.save(existente);
+
+        auditoriaService.registrar(usuarioId, usuarioNome, "ALTERACAO_CLIENTE",
+                "Cliente '" + pessoa.getNome() + "' (ID " + id + ") alterado.");
+
+        return atualizado;
     }
 
     @Transactional
-    public void excluir(Integer id) {
+    public void excluir(Integer id, Long usuarioId, String usuarioNome) {
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
         Pessoa pessoa = cliente.getPessoa();
+        String nomeCliente = pessoa.getNome();
 
         vendaRepository.deleteAll(vendaRepository.findByClienteId(cliente.getId()));
 
@@ -89,6 +104,9 @@ public class ClienteService {
 
         repository.delete(cliente);
         pessoaRepository.delete(pessoa);
+
+        auditoriaService.registrar(usuarioId, usuarioNome, "EXCLUSAO_CLIENTE",
+                "Cliente '" + nomeCliente + "' (ID " + id + ") excluído.");
     }
 
     private String limparCpf(String cpf) {

@@ -1,6 +1,7 @@
 package com.sistemacafeplanob.backend.controller;
 
 import com.sistemacafeplanob.backend.dto.PagamentoRequestDTO;
+import com.sistemacafeplanob.backend.dto.RelatorioInventarioItemDTO;
 import com.sistemacafeplanob.backend.dto.VendaRequestDTO;
 import com.sistemacafeplanob.backend.entity.Venda;
 import com.sistemacafeplanob.backend.service.VendaService;
@@ -12,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/vendas")
 public class VendaController {
+
     @Autowired
     private VendaService service;
 
@@ -33,5 +35,10 @@ public class VendaController {
     @PatchMapping("/{id}/pagamento")
     public Venda atualizarPagamento(@PathVariable Long id, @RequestBody PagamentoRequestDTO dto) {
         return service.atualizarPagamento(id, dto);
+    }
+
+    @GetMapping("/relatorio/inventario")
+    public List<RelatorioInventarioItemDTO> relatorioInventario() {
+        return service.gerarRelatorioInventario();
     }
 }

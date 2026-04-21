@@ -1,6 +1,7 @@
 package com.sistemacafeplanob.backend.service;
 
 import com.sistemacafeplanob.backend.dto.PagamentoRequestDTO;
+import com.sistemacafeplanob.backend.dto.RelatorioInventarioItemDTO;
 import com.sistemacafeplanob.backend.dto.VendaRequestDTO;
 import com.sistemacafeplanob.backend.dto.VendaProdutoRequestDTO;
 import com.sistemacafeplanob.backend.entity.Cliente;
@@ -14,12 +15,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import jakarta.persistence.EntityManager;
 
 @Service
 public class VendaService {
+
     @Autowired
     private VendaRepository vendaRepository;
 
@@ -28,6 +35,9 @@ public class VendaService {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private AuditoriaService auditoriaService;
 
     @Transactional
     public Venda realizarVenda(VendaRequestDTO dto) {
@@ -39,6 +49,7 @@ public class VendaService {
 
         venda = vendaRepository.save(venda);
 
+        StringBuilder itensDesc = new StringBuilder();
         for (VendaProdutoRequestDTO item : dto.getProdutos()) {
             Produto produto = produtoRepository.findById(item.getProdutoId())
                     .orElseThrow(() -> new RuntimeException("Produto não encontrado: " + item.getProdutoId()));
@@ -53,7 +64,17 @@ public class VendaService {
 
             produto.setEstoque(produto.getEstoque() - item.getQuantidade());
             produtoRepository.save(produto);
+
+            if (itensDesc.length() > 0) itensDesc.append(", ");
+            itensDesc.append(produto.getNome()).append(" x").append(item.getQuantidade());
         }
+
+        auditoriaService.registrar(
+                dto.getUsuarioId(),
+                dto.getUsuarioNome(),
+                "VENDA",
+                "Venda #" + venda.getId() + " realizada. Itens: " + itensDesc
+        );
 
         return venda;
     }
@@ -73,5 +94,36 @@ public class VendaService {
         venda.setFormaPagamento(dto.getFormaPagamento());
         venda.setValorPago(dto.getValorPago());
         return vendaRepository.save(venda);
+    }
+
+    public List<RelatorioInventarioItemDTO> gerarRelatorioInventario() {
+        List<Venda> vendas = vendaRepository.findAllComItens();
+        Map<Long, RelatorioInventarioItemDTO> mapa = new LinkedHashMap<>();
+
+        for (Venda v : vendas) {
+            if (v.getItens() == null) continue;
+            for (VendaItem vi : v.getItens()) {
+                Long produtoId = vi.getProduto().getId();
+                RelatorioInventarioItemDTO dto = mapa.computeIfAbsent(produtoId,
+                        k -> new RelatorioInventarioItemDTO(vi.getProduto().getNome()));
+
+                BigDecimal receita = vi.getPrecoUnitario()
+                        .multiply(BigDecimal.valueOf(vi.getQuantidade()));
+                BigDecimal custoPorUnidade = vi.getProduto().getPreco_custo() != null
+                        ? vi.getProduto().getPreco_custo()
+                        : BigDecimal.ZERO;
+                BigDecimal custo = custoPorUnidade.multiply(BigDecimal.valueOf(vi.getQuantidade()));
+
+                dto.setQuantidadeVendida(dto.getQuantidadeVendida() + vi.getQuantidade());
+                dto.setTotalReceita(dto.getTotalReceita().add(receita));
+                dto.setTotalCusto(dto.getTotalCusto().add(custo));
+            }
+        }
+
+        List<RelatorioInventarioItemDTO> resultado = new ArrayList<>(mapa.values());
+        resultado.forEach(dto -> dto.setLucro(dto.getTotalReceita().subtract(dto.getTotalCusto())));
+        resultado.sort(Comparator.comparing(RelatorioInventarioItemDTO::getNomeProduto));
+
+        return resultado;
     }
 }

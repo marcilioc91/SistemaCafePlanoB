@@ -9,6 +9,7 @@ import java.util.List;
 public class VendaRequestDTO {
     private Long clienteId;
     private Long usuarioId;
+    private String usuarioNome;
     private List<VendaProdutoRequestDTO> produtos;
     private String formaPagamento;
     private BigDecimal valorPago;

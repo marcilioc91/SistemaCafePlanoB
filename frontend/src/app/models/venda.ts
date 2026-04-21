@@ -8,9 +8,18 @@ export interface VendaProduto {
 export interface Venda {
   clienteId: number;
   usuarioId: number;
+  usuarioNome?: string;
   produtos: VendaProduto[];
   formaPagamento: string;
   valorPago: number;
+}
+
+export interface RelatorioInventarioItem {
+  nomeProduto: string;
+  quantidadeVendida: number;
+  totalReceita: number;
+  totalCusto: number;
+  lucro: number;
 }
 
 export interface VendaItemResposta {

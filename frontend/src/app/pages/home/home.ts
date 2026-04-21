@@ -36,6 +36,14 @@ export class Home {
     this.router.navigate(['/historico-vendas']);
   }
 
+  irParaRelatorioInventario() {
+    this.router.navigate(['/relatorio-inventario']);
+  }
+
+  irParaAuditoria() {
+    this.router.navigate(['/auditoria']);
+  }
+
   logout() {
     this.auth.logout();
     this.router.navigate(['/']);

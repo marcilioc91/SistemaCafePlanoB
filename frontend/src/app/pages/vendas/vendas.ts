@@ -187,6 +187,7 @@ export class Vendas implements OnInit {
       const venda = {
         clienteId: this.clienteSelecionado!.id!,
         usuarioId: usuario.id,
+        usuarioNome: usuario?.pessoa?.nome ?? usuario?.usuarioLogin ?? '',
         produtos: this.carrinho.map(i => ({
           produtoId: i.produto.id!,
           quantidade: i.quantidade

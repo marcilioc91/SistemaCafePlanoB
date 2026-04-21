@@ -1,0 +1,80 @@
+<div class="relatorio-container">
+
+  <div class="relatorio-header">
+    <button mat-icon-button (click)="voltar()" title="Voltar">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="relatorio-titulo">
+      <mat-icon>bar_chart</mat-icon>
+      Relatório de Inventário
+    </h2>
+  </div>
+
+  <div *ngIf="carregando" class="relatorio-loading">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Carregando dados...</p>
+  </div>
+
+  <ng-container *ngIf="!carregando">
+    <div *ngIf="itens.length === 0" class="relatorio-vazio">
+      <mat-icon>inbox</mat-icon>
+      <p>Nenhuma venda registrada.</p>
+    </div>
+
+    <div *ngIf="itens.length > 0" class="relatorio-tabela-wrapper">
+      <table mat-table [dataSource]="itens" class="relatorio-tabela mat-elevation-z2">
+
+        <ng-container matColumnDef="nomeProduto">
+          <th mat-header-cell *matHeaderCellDef>Produto</th>
+          <td mat-cell *matCellDef="let row">{{ row.nomeProduto }}</td>
+          <td mat-footer-cell *matFooterCellDef><strong>TOTAL</strong></td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantidadeVendida">
+          <th mat-header-cell *matHeaderCellDef class="col-num">Qtd. Vendida</th>
+          <td mat-cell *matCellDef="let row" class="col-num">{{ row.quantidadeVendida }}</td>
+          <td mat-footer-cell *matFooterCellDef class="col-num"></td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalReceita">
+          <th mat-header-cell *matHeaderCellDef class="col-num">Receita</th>
+          <td mat-cell *matCellDef="let row" class="col-num receita">
+            {{ row.totalReceita | currency:'BRL':'symbol':'1.2-2' }}
+          </td>
+          <td mat-footer-cell *matFooterCellDef class="col-num receita">
+            <strong>{{ totalReceita | currency:'BRL':'symbol':'1.2-2' }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="totalCusto">
+          <th mat-header-cell *matHeaderCellDef class="col-num">Custo</th>
+          <td mat-cell *matCellDef="let row" class="col-num custo">
+            {{ row.totalCusto | currency:'BRL':'symbol':'1.2-2' }}
+          </td>
+          <td mat-footer-cell *matFooterCellDef class="col-num custo">
+            <strong>{{ totalCusto | currency:'BRL':'symbol':'1.2-2' }}</strong>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lucro">
+          <th mat-header-cell *matHeaderCellDef class="col-num">Lucro / Despesa</th>
+          <td mat-cell *matCellDef="let row" class="col-num"
+              [class.lucro-positivo]="row.lucro >= 0"
+              [class.lucro-negativo]="row.lucro < 0">
+            {{ row.lucro | currency:'BRL':'symbol':'1.2-2' }}
+          </td>
+          <td mat-footer-cell *matFooterCellDef class="col-num"
+              [class.lucro-positivo]="totalLucro >= 0"
+              [class.lucro-negativo]="totalLucro < 0">
+            <strong>{{ totalLucro | currency:'BRL':'symbol':'1.2-2' }}</strong>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+        <tr mat-footer-row *matFooterRowDef="colunas" class="rodape-totais"></tr>
+      </table>
+    </div>
+  </ng-container>
+
+</div>

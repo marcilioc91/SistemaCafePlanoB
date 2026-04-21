@@ -1,0 +1,86 @@
+.relatorio-container {
+  padding: 32px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.relatorio-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.relatorio-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.4rem;
+  color: #3e2723;
+  margin: 0;
+}
+
+.relatorio-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  margin-top: 60px;
+  color: #6d4c41;
+}
+
+.relatorio-vazio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 60px;
+  color: #9e9e9e;
+  font-size: 1.1rem;
+}
+
+.relatorio-vazio mat-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+}
+
+.relatorio-tabela-wrapper {
+  overflow-x: auto;
+}
+
+.relatorio-tabela {
+  width: 100%;
+}
+
+.col-num {
+  text-align: right !important;
+}
+
+.receita {
+  color: #1565c0;
+}
+
+.custo {
+  color: #6d4c41;
+}
+
+.lucro-positivo {
+  color: #2e7d32;
+  font-weight: 600;
+}
+
+.lucro-negativo {
+  color: #c62828;
+  font-weight: 600;
+}
+
+.rodape-totais {
+  background-color: #efebe9;
+  font-weight: 700;
+}
+
+.rodape-totais td {
+  border-top: 2px solid #bcaaa4;
+  font-size: 0.95rem;
+}
