@@ -11,6 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { VendaResposta } from '../../models/venda';
@@ -124,6 +125,8 @@ export class PagamentoTotalDialog {
     MatFormFieldModule,
     MatSelectModule,
     MatTooltipModule,
+    MatAutocompleteModule,
+    MatInputModule,
     FormsModule,
   ],
   templateUrl: './historico-vendas.html',
@@ -137,6 +140,7 @@ export class HistoricoVendas implements OnInit {
   filtroMes = 0;
   filtroAno = 0;
   filtroStatus = '';
+  filtroCliente = '';
 
   readonly meses = [
     { valor: 0, label: 'Todos os meses' },
@@ -163,8 +167,19 @@ export class HistoricoVendas implements OnInit {
     ];
   }
 
+  get clientesSugeridos(): string[] {
+    const termo = this.filtroCliente.toLowerCase().trim();
+    return this.grupos
+      .map(g => g.nomeCliente)
+      .filter(nome => !termo || nome.toLowerCase().includes(termo));
+  }
+
   get gruposFiltrados(): GrupoCliente[] {
     return this.grupos
+      .filter(grupo => {
+        if (!this.filtroCliente.trim()) return true;
+        return grupo.nomeCliente.toLowerCase().includes(this.filtroCliente.toLowerCase().trim());
+      })
       .map(grupo => {
         let vendas = grupo.vendas;
 
@@ -210,6 +225,7 @@ export class HistoricoVendas implements OnInit {
     this.filtroMes = 0;
     this.filtroAno = 0;
     this.filtroStatus = '';
+    this.filtroCliente = '';
   }
 
   constructor(
