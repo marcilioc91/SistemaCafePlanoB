@@ -76,8 +76,12 @@ export class ProdutoForm implements OnInit {
   ngOnInit() { this.carregar(); }
 
   carregar() {
-    this.produtoService.listar().subscribe(dados => {
-      this.produtos = dados;
+    this.produtoService.listar().subscribe({
+      next: dados => {
+        this.produtos = dados;
+        this.cdr.detectChanges();
+      },
+      error: () => this.snackBar.open('Erro ao carregar produtos.', 'Fechar', { duration: 3000 })
     });
   }
 
