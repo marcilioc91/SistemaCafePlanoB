@@ -70,15 +70,16 @@ export class PagamentoDialog {
   cancelar() { this.dialogRef.close(null); }
 }
 
-// ── Diálogo de quitação total do cliente ─────────────────────────────────────
+// ── Diálogo de pagamento geral do cliente ────────────────────────────────────
 @Component({
   selector: 'app-pagamento-total-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule],
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatButtonModule],
   templateUrl: './pagamento-total-dialog.html',
 })
 export class PagamentoTotalDialog {
   formaPagamento = '';
+  valorPago: number;
   erro = '';
 
   formas = [
@@ -87,14 +88,21 @@ export class PagamentoTotalDialog {
     { valor: 'CARTAO_CREDITO', label: 'Cartão de Crédito' },
     { valor: 'CARTAO_DEBITO', label: 'Cartão de Débito' },
     { valor: 'VOUCHER', label: 'Voucher' },
+    { valor: 'PENDENTE', label: 'Deixar Pendente' },
   ];
 
   constructor(
     private dialogRef: MatDialogRef<PagamentoTotalDialog>,
     @Inject(MAT_DIALOG_DATA) public data: { nomeCliente: string; totalPendente: number }
-  ) {}
+  ) {
+    this.valorPago = data.totalPendente;
+  }
 
-  confirmar() { this.dialogRef.close(this.formaPagamento); }
+  confirmar() {
+    const valorFinal = this.formaPagamento === 'PENDENTE' ? 0 : this.valorPago;
+    this.dialogRef.close({ formaPagamento: this.formaPagamento, valorPago: valorFinal });
+  }
+
   cancelar() { this.dialogRef.close(null); }
 }
 
@@ -301,21 +309,42 @@ export class HistoricoVendas implements OnInit {
       width: '420px',
       data: { nomeCliente: grupo.nomeCliente, totalPendente: grupo.totalPendente }
     });
-    ref.afterClosed().subscribe((formaPagamento: string | null) => {
-      if (!formaPagamento) return;
-      const pendentes = grupo.vendas.filter(v => (v.valorPago ?? 0) < this.totalVenda(v));
+    ref.afterClosed().subscribe((resultado: { formaPagamento: string; valorPago: number } | null) => {
+      if (!resultado) return;
+
+      const { formaPagamento, valorPago } = resultado;
+      const pendentes = [...grupo.vendas]
+        .filter(v => (v.valorPago ?? 0) < this.totalVenda(v))
+        .sort((a, b) => a.id - b.id);
+
       if (!pendentes.length) return;
+
+      // Distribui o valor pago nas vendas pendentes (mais antigas primeiro)
+      let restante = valorPago;
+      const atualizacoes: { id: number; valorPago: number }[] = [];
+
+      for (const v of pendentes) {
+        if (restante <= 0) break;
+        const jaAdiantado = v.valorPago ?? 0;
+        const faltava = this.totalVenda(v) - jaAdiantado;
+        const aplicar = Math.min(restante, faltava);
+        atualizacoes.push({ id: v.id, valorPago: jaAdiantado + aplicar });
+        restante -= aplicar;
+      }
+
+      // Se sobrou valor (pagamento a mais), aplica como crédito na última venda atualizada
+      if (restante > 0 && atualizacoes.length > 0) {
+        atualizacoes[atualizacoes.length - 1].valorPago += restante;
+      }
+
       forkJoin(
-        pendentes.map(v => this.vendaService.atualizarPagamento(v.id, {
-          formaPagamento,
-          valorPago: this.totalVenda(v)
-        }))
+        atualizacoes.map(a => this.vendaService.atualizarPagamento(a.id, { formaPagamento, valorPago: a.valorPago }))
       ).subscribe({
         next: () => {
-          this.snackBar.open('Pendências quitadas com sucesso!', 'Fechar', { duration: 3000 });
+          this.snackBar.open('Pagamento registrado!', 'Fechar', { duration: 3000 });
           this.carregar();
         },
-        error: () => this.snackBar.open('Erro ao quitar pendências.', 'Fechar', { duration: 3000 })
+        error: () => this.snackBar.open('Erro ao registrar pagamento.', 'Fechar', { duration: 3000 })
       });
     });
   }

@@ -1,4 +1,4 @@
-<h2 style="padding: 24px 24px 0">Quitar Pendências</h2>
+<h2 style="padding: 24px 24px 0">Registrar Pagamento</h2>
 
 <div style="padding: 0 24px 24px; min-width: 360px;">
   <p class="uppercase" style="font-weight:600; margin-bottom: 4px;">{{ data.nomeCliente }}</p>
@@ -15,6 +15,24 @@
     </mat-select>
   </mat-form-field>
 
+  @if (formaPagamento && formaPagamento !== 'PENDENTE') {
+    <mat-form-field style="width:100%">
+      <mat-label>Valor pago (R$)</mat-label>
+      <input matInput [(ngModel)]="valorPago" name="valorPago" type="number" min="0" step="0.01">
+    </mat-form-field>
+
+    @if (valorPago < data.totalPendente) {
+      <p style="color:#f57c00; font-size:0.85rem; margin: 0 0 8px">
+        Saldo restante após pagamento: R$ {{ (data.totalPendente - valorPago) | number:'1.2-2' }}
+      </p>
+    }
+    @if (valorPago > data.totalPendente) {
+      <p style="color:#388e3c; font-size:0.85rem; margin: 0 0 8px">
+        Crédito gerado: R$ {{ (valorPago - data.totalPendente) | number:'1.2-2' }}
+      </p>
+    }
+  }
+
   @if (erro) {
     <p style="color:red; font-size:0.85rem">{{ erro }}</p>
   }
@@ -22,7 +40,7 @@
   <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:12px;">
     <button mat-button (click)="cancelar()">Cancelar</button>
     <button mat-raised-button color="primary" [disabled]="!formaPagamento" (click)="confirmar()">
-      Confirmar Pagamento
+      Salvar
     </button>
   </div>
 </div>
