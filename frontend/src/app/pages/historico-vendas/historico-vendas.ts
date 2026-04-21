@@ -301,7 +301,8 @@ export class HistoricoVendas implements OnInit {
       PIX: 'PIX',
       CARTAO_CREDITO: 'Cartão de Crédito',
       CARTAO_DEBITO: 'Cartão de Débito',
-      PENDENTE: 'Pendente',
+      VOUCHER: 'Voucher',
+      PENDENTE: 'Pendente'
     };
     return mapa[forma] ?? forma ?? '—';
   }

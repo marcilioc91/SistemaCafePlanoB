@@ -47,6 +47,7 @@ export class VendaConfirmacaoDialog {
     { valor: 'PIX', label: 'PIX' },
     { valor: 'CARTAO_CREDITO', label: 'Cartão de Crédito' },
     { valor: 'CARTAO_DEBITO', label: 'Cartão de Débito' },
+    { valor: 'VOUCHER', label: 'Voucher' },
     { valor: 'PENDENTE', label: 'Deixar Pendente' },
   ];
 

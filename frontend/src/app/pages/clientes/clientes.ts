@@ -24,14 +24,7 @@ import { formatarTelefone } from '../../utils/utils';
   selector: 'app-confirm-dialog',
   standalone: true,
   imports: [MatButtonModule, MatDialogModule],
-  template: `
-    <h2 mat-dialog-title>{{ data.titulo }}</h2>
-    <mat-dialog-content>{{ data.mensagem }}</mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-stroked-button (click)="dialogRef.close(false)">Não</button>
-      <button mat-raised-button color="warn" (click)="dialogRef.close(true)">Sim</button>
-    </mat-dialog-actions>
-  `,
+  templateUrl: 'cliente-dialog-confirm.html',
 })
 export class ConfirmDialog {
   constructor(
@@ -193,6 +186,7 @@ export class Clientes implements OnInit {
         titulo: 'Excluir cliente',
         mensagem: `Deseja excluir "${cliente.pessoa.nome}"? Todas as vendas, o usuário e os dados pessoais vinculados serão removidos permanentemente.`,
       },
+      panelClass: 'confirm-dialog-panel'
     });
     ref.afterClosed().subscribe((confirmado: boolean) => {
       if (!confirmado) return;

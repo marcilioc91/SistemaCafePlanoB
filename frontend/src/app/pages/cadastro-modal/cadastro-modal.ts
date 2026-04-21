@@ -10,28 +10,10 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
 import { ClienteService } from '../../services/cliente.service';
 import { Cliente } from '../../models/cliente';
+import { cpfValido, emailValido } from '../../utils/utils';
 
 export interface CadastroModalData {
   modo: 'usuario' | 'cliente';
-}
-
-function cpfValido(cpf: string): boolean {
-  const n = cpf.replace(/\D/g, '');
-  if (n.length !== 11 || /^(\d)\1+$/.test(n)) return false;
-  let soma = 0;
-  for (let i = 0; i < 9; i++) soma += +n[i] * (10 - i);
-  let d1 = 11 - (soma % 11);
-  if (d1 >= 10) d1 = 0;
-  if (d1 !== +n[9]) return false;
-  soma = 0;
-  for (let i = 0; i < 10; i++) soma += +n[i] * (11 - i);
-  let d2 = 11 - (soma % 11);
-  if (d2 >= 10) d2 = 0;
-  return d2 === +n[10];
-}
-
-function emailValido(email: string): boolean {
-  return /^[\w+.%-]+@[\w.-]+\.[a-zA-Z]{2,}$/.test(email);
 }
 
 @Component({
