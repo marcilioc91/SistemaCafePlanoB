@@ -12,6 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { VendaResposta } from '../../models/venda';
 import { VendaService } from '../../services/venda.service';
 
@@ -66,6 +67,34 @@ export class PagamentoDialog {
     });
   }
 
+  cancelar() { this.dialogRef.close(null); }
+}
+
+// ── Diálogo de quitação total do cliente ─────────────────────────────────────
+@Component({
+  selector: 'app-pagamento-total-dialog',
+  standalone: true,
+  imports: [CommonModule, FormsModule, MatFormFieldModule, MatSelectModule, MatButtonModule],
+  templateUrl: './pagamento-total-dialog.html',
+})
+export class PagamentoTotalDialog {
+  formaPagamento = '';
+  erro = '';
+
+  formas = [
+    { valor: 'DINHEIRO', label: 'Dinheiro' },
+    { valor: 'PIX', label: 'PIX' },
+    { valor: 'CARTAO_CREDITO', label: 'Cartão de Crédito' },
+    { valor: 'CARTAO_DEBITO', label: 'Cartão de Débito' },
+    { valor: 'VOUCHER', label: 'Voucher' },
+  ];
+
+  constructor(
+    private dialogRef: MatDialogRef<PagamentoTotalDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: { nomeCliente: string; totalPendente: number }
+  ) {}
+
+  confirmar() { this.dialogRef.close(this.formaPagamento); }
   cancelar() { this.dialogRef.close(null); }
 }
 
@@ -264,6 +293,30 @@ export class HistoricoVendas implements OnInit {
       venda.valorPago = resultado.valorPago;
       this.carregar();
       this.snackBar.open('Pagamento atualizado!', 'Fechar', { duration: 3000 });
+    });
+  }
+
+  abrirPagamentoTotal(grupo: GrupoCliente) {
+    const ref = this.dialog.open(PagamentoTotalDialog, {
+      width: '420px',
+      data: { nomeCliente: grupo.nomeCliente, totalPendente: grupo.totalPendente }
+    });
+    ref.afterClosed().subscribe((formaPagamento: string | null) => {
+      if (!formaPagamento) return;
+      const pendentes = grupo.vendas.filter(v => (v.valorPago ?? 0) < this.totalVenda(v));
+      if (!pendentes.length) return;
+      forkJoin(
+        pendentes.map(v => this.vendaService.atualizarPagamento(v.id, {
+          formaPagamento,
+          valorPago: this.totalVenda(v)
+        }))
+      ).subscribe({
+        next: () => {
+          this.snackBar.open('Pendências quitadas com sucesso!', 'Fechar', { duration: 3000 });
+          this.carregar();
+        },
+        error: () => this.snackBar.open('Erro ao quitar pendências.', 'Fechar', { duration: 3000 })
+      });
     });
   }
 }

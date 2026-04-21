@@ -130,6 +130,16 @@
         </mat-expansion-panel>
         }
       </mat-accordion>
+
+      @if (grupo.totalPendente > 0) {
+      <div class="rodape-grupo">
+        <button mat-raised-button color="accent" (click)="abrirPagamentoTotal(grupo)">
+          <mat-icon>payments</mat-icon>
+          Quitar total pendente &nbsp;·&nbsp; R$ {{ grupo.totalPendente | number:'1.2-2' }}
+        </button>
+      </div>
+      }
+
     </mat-expansion-panel>
     }
   </mat-accordion>

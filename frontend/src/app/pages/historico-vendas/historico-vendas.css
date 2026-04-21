@@ -81,3 +81,9 @@
 .filtro-campo {
   min-width: 160px;
 }
+
+.rodape-grupo {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0 4px;
+}
