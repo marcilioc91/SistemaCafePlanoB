@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
@@ -28,28 +28,26 @@ export class RelatorioInventario implements OnInit {
   itens: RelatorioInventarioItem[] = [];
   carregando = true;
   colunas = ['nomeProduto', 'quantidadeVendida', 'totalReceita', 'totalCusto', 'lucro'];
+  totalReceita = 0;
+  totalCusto = 0;
+  totalLucro = 0;
 
-  get totalReceita(): number {
-    return this.itens.reduce((s, i) => s + i.totalReceita, 0);
-  }
-
-  get totalCusto(): number {
-    return this.itens.reduce((s, i) => s + i.totalCusto, 0);
-  }
-
-  get totalLucro(): number {
-    return this.itens.reduce((s, i) => s + i.lucro, 0);
-  }
-
-  constructor(private vendaService: VendaService, private router: Router) {}
+  constructor(private vendaService: VendaService, private router: Router, private cdRef: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.vendaService.getRelatorioInventario().subscribe({
       next: (dados) => {
         this.itens = dados;
+
+        this.totalReceita = this.itens.reduce((s, i) => s + (i.totalReceita ?? 0), 0);
+        this.totalCusto = this.itens.reduce((s, i) => s + (i.totalCusto ?? 0), 0);
+        this.totalLucro = this.itens.reduce((s, i) => s + (i.lucro ?? 0), 0);
+
         this.carregando = false;
+        this.cdRef.detectChanges();
       },
-      error: () => {
+      error: (err) => {
+        console.error('Erro ao carregar relatório de inventário:', err);
         this.carregando = false;
       },
     });
@@ -57,5 +55,8 @@ export class RelatorioInventario implements OnInit {
 
   voltar() {
     this.router.navigate(['/home']);
+  }
+  trackByProduto(index: number, item: RelatorioInventarioItem) {
+    return item.nomeProduto;
   }
 }

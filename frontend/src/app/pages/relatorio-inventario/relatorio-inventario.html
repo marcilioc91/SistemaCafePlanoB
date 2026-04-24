@@ -22,7 +22,7 @@
     </div>
 
     <div *ngIf="itens.length > 0" class="relatorio-tabela-wrapper">
-      <table mat-table [dataSource]="itens" class="relatorio-tabela mat-elevation-z2">
+      <table mat-table [dataSource]="itens" [trackBy]="trackByProduto" class="relatorio-tabela mat-elevation-z2">
 
         <ng-container matColumnDef="nomeProduto">
           <th mat-header-cell *matHeaderCellDef>Produto</th>

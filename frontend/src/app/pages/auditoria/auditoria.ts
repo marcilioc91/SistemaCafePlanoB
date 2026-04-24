@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -43,7 +43,11 @@ export class Auditoria implements OnInit {
 
   colunas = ['dataHora', 'usuarioNome', 'tipoOperacao', 'descricao'];
 
-  constructor(private auditoriaService: AuditoriaService, private router: Router) {}
+  constructor(
+    private auditoriaService: AuditoriaService,
+    private router: Router,
+    private cdRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.auditoriaService.listar().subscribe({
@@ -52,6 +56,7 @@ export class Auditoria implements OnInit {
         this.logsFiltrados = dados;
         this.extrairUsuarios(dados);
         this.carregando = false;
+        this.cdRef.detectChanges();
       },
       error: () => {
         this.carregando = false;
