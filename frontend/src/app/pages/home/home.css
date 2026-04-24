@@ -53,7 +53,7 @@
 
 .home-cards {
   display: flex;
-  gap: 24px;
+  gap: 35px;
   flex-wrap: wrap;
   justify-content: center;
 }

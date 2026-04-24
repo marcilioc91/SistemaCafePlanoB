@@ -51,8 +51,8 @@
       <mat-card class="home-card" (click)="irParaCadastroCliente()">
         <mat-card-content>
           <mat-icon class="home-icon">person_add</mat-icon>
-          <h3>Cliente</h3>
-          <p>Gerenciar clientes</p>
+          <h3>Cliente / Usuário</h3>
+          <p>Gerenciar clientes e usuários</p>
         </mat-card-content>
       </mat-card>
 
@@ -60,31 +60,11 @@
         <mat-card-content>
           <mat-icon class="home-icon">inventory_2</mat-icon>
           <h3>Produto</h3>
-          <p>Gerenciar produtos</p>
+          <p>Gerenciar produtos e estoque</p>
         </mat-card-content>
       </mat-card>
     </div>
   </div>
-
-  <!-- ADMINISTRAÇÃO -->
-  @if (isAdmin) {
-    <div class="home-section">
-      <h3 class="home-section-title">
-        <mat-icon>admin_panel_settings</mat-icon>
-        Administração
-      </h3>
-
-      <div class="home-cards">
-        <mat-card class="home-card" (click)="irParaGerenciarUsuarios()">
-          <mat-card-content>
-            <mat-icon class="home-icon">manage_accounts</mat-icon>
-            <h3>Gerenciar Usuários</h3>
-            <p>Atribuir perfis de acesso</p>
-          </mat-card-content>
-        </mat-card>
-      </div>
-    </div>
-  }
 
   <!-- RELATÓRIOS E AUDITORIA -->
   <div class="home-section">
@@ -95,13 +75,13 @@
 
     <div class="home-cards">
       @if (isAdmin) {
-        <mat-card class="home-card" (click)="irParaRelatorioInventario()">
-          <mat-card-content>
-            <mat-icon class="home-icon">bar_chart</mat-icon>
-            <h3>Relatório de Inventário</h3>
-            <p>Vendas, custos e lucros por produto</p>
-          </mat-card-content>
-        </mat-card>
+      <mat-card class="home-card" (click)="irParaRelatorioInventario()">
+        <mat-card-content>
+          <mat-icon class="home-icon">bar_chart</mat-icon>
+          <h3>Relatório de Inventário</h3>
+          <p>Vendas, custos e lucros por produto</p>
+        </mat-card-content>
+      </mat-card>
       }
 
       <mat-card class="home-card" (click)="irParaAuditoria()">
@@ -113,5 +93,25 @@
       </mat-card>
     </div>
   </div>
+
+  <!-- ADMINISTRAÇÃO -->
+  @if (isAdmin) {
+  <div class="home-section">
+    <h3 class="home-section-title">
+      <mat-icon>admin_panel_settings</mat-icon>
+      Administração
+    </h3>
+
+    <div class="home-cards">
+      <mat-card class="home-card" (click)="irParaGerenciarUsuarios()">
+        <mat-card-content>
+          <mat-icon class="home-icon">manage_accounts</mat-icon>
+          <h3>Gerenciar Usuários</h3>
+          <p>Atribuir perfis de acesso</p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  }
 
 </div>
