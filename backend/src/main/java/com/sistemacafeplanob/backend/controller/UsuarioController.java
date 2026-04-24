@@ -1,5 +1,6 @@
 package com.sistemacafeplanob.backend.controller;
 
+import com.sistemacafeplanob.backend.dto.AtualizarPerfilDTO;
 import com.sistemacafeplanob.backend.dto.CadastroRequestDTO;
 import com.sistemacafeplanob.backend.dto.LoginRequestDTO;
 import com.sistemacafeplanob.backend.entity.Usuario;
@@ -30,6 +31,34 @@ public class UsuarioController {
             return ResponseEntity.status(201).body(criado);
         } catch (Exception e) {
             return ResponseEntity.status(400).body("Erro ao cadastrar: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/usuarios")
+    public ResponseEntity<?> listarUsuarios(
+            @RequestHeader(value = "X-Usuario-Perfil", required = false) String perfil) {
+        if (!"ADMIN".equals(perfil)) {
+            return ResponseEntity.status(403).body("Acesso negado.");
+        }
+        return ResponseEntity.ok(service.listarTodos());
+    }
+
+    @PatchMapping("/usuarios/{id}/perfil")
+    public ResponseEntity<?> atualizarPerfil(
+            @PathVariable Long id,
+            @RequestHeader(value = "X-Usuario-Perfil", required = false) String perfil,
+            @RequestHeader(value = "X-Usuario-Id", required = false) Long adminId,
+            @RequestBody AtualizarPerfilDTO dto) {
+        if (!"ADMIN".equals(perfil)) {
+            return ResponseEntity.status(403).body("Acesso negado.");
+        }
+        if (id.equals(adminId)) {
+            return ResponseEntity.status(400).body("Você não pode alterar o próprio perfil.");
+        }
+        try {
+            return ResponseEntity.ok(service.atualizarPerfil(id, dto.getPerfil()));
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
 }

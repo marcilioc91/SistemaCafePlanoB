@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RelatorioInventarioItem, Venda, VendaResposta } from '../models/venda';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,7 @@ import { RelatorioInventarioItem, Venda, VendaResposta } from '../models/venda';
 export class VendaService {
   private api = 'http://localhost:8080/vendas';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
   realizarVenda(venda: Venda) {
     return this.http.post(this.api, venda);
@@ -27,6 +28,8 @@ export class VendaService {
   }
 
   getRelatorioInventario() {
-    return this.http.get<RelatorioInventarioItem[]>(`${this.api}/relatorio/inventario`);
+    const perfil = this.auth.getUsuarioLogado()?.perfil ?? '';
+    const headers = new HttpHeaders({ 'X-Usuario-Perfil': perfil });
+    return this.http.get<RelatorioInventarioItem[]>(`${this.api}/relatorio/inventario`, { headers });
   }
 }

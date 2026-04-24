@@ -28,6 +28,10 @@ public class Usuario {
     @JsonIgnore
     private String senha;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "PERFIL", nullable = false)
+    private PerfilUsuario perfil = PerfilUsuario.OPERADOR;
+
     @CreationTimestamp
     private LocalDateTime data_criacao;
 }

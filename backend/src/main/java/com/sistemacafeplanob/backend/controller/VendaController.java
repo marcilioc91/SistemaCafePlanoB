@@ -6,6 +6,7 @@ import com.sistemacafeplanob.backend.dto.VendaRequestDTO;
 import com.sistemacafeplanob.backend.entity.Venda;
 import com.sistemacafeplanob.backend.service.VendaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,7 +39,11 @@ public class VendaController {
     }
 
     @GetMapping("/relatorio/inventario")
-    public List<RelatorioInventarioItemDTO> relatorioInventario() {
-        return service.gerarRelatorioInventario();
+    public ResponseEntity<?> relatorioInventario(
+            @RequestHeader(value = "X-Usuario-Perfil", required = false) String perfil) {
+        if (!"ADMIN".equals(perfil)) {
+            return ResponseEntity.status(403).body("Acesso negado.");
+        }
+        return ResponseEntity.ok(service.gerarRelatorioInventario());
     }
 }

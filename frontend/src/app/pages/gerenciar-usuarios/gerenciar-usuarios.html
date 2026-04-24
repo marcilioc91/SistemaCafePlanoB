@@ -1,0 +1,71 @@
+<div class="gerenciar-container">
+
+  <div class="gerenciar-header">
+    <button mat-icon-button (click)="voltar()" title="Voltar">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <h2 class="gerenciar-titulo">
+      <mat-icon>manage_accounts</mat-icon>
+      Gerenciar Usuários
+    </h2>
+  </div>
+
+  <div *ngIf="carregando" class="gerenciar-loading">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Carregando usuários...</p>
+  </div>
+
+  <ng-container *ngIf="!carregando">
+    <div *ngIf="usuarios.length === 0" class="gerenciar-vazio">
+      <mat-icon>inbox</mat-icon>
+      <p>Nenhum usuário cadastrado.</p>
+    </div>
+
+    <div *ngIf="usuarios.length > 0" class="gerenciar-tabela-wrapper">
+      <table mat-table [dataSource]="usuarios" class="gerenciar-tabela mat-elevation-z2">
+
+        <ng-container matColumnDef="nome">
+          <th mat-header-cell *matHeaderCellDef>Nome</th>
+          <td mat-cell *matCellDef="let u">{{ u.pessoa?.nome ?? '—' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="login">
+          <th mat-header-cell *matHeaderCellDef>Login</th>
+          <td mat-cell *matCellDef="let u">{{ u.usuarioLogin }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>E-mail</th>
+          <td mat-cell *matCellDef="let u">{{ u.email }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="perfil">
+          <th mat-header-cell *matHeaderCellDef>Perfil</th>
+          <td mat-cell *matCellDef="let u">
+            <span class="badge-perfil" [ngClass]="u.perfil === 'ADMIN' ? 'admin' : 'operador'">
+              {{ u.perfil }}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="acao">
+          <th mat-header-cell *matHeaderCellDef>Ação</th>
+          <td mat-cell *matCellDef="let u">
+            <button
+              mat-stroked-button
+              [disabled]="u.id === adminId"
+              [title]="u.id === adminId ? 'Você não pode alterar o próprio perfil' : ''"
+              (click)="alternarPerfil(u)">
+              <mat-icon>{{ u.perfil === 'ADMIN' ? 'person_remove' : 'admin_panel_settings' }}</mat-icon>
+              {{ u.perfil === 'ADMIN' ? 'Remover Admin' : 'Tornar Admin' }}
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="colunas"></tr>
+        <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+      </table>
+    </div>
+  </ng-container>
+
+</div>

@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { LoginRequest } from '../models/usuario';
+import { LoginRequest, Usuario } from '../models/usuario';
 
 export interface CadastroRequest {
   nome: string;
@@ -35,6 +35,26 @@ export class AuthService {
   getUsuarioLogado(): any {
     const u = sessionStorage.getItem('usuario');
     return u ? JSON.parse(u) : null;
+  }
+
+  isAdmin(): boolean {
+    return this.getUsuarioLogado()?.perfil === 'ADMIN';
+  }
+
+  private adminHeaders(): HttpHeaders {
+    const u = this.getUsuarioLogado();
+    return new HttpHeaders({
+      'X-Usuario-Perfil': u?.perfil ?? '',
+      'X-Usuario-Id': String(u?.id ?? ''),
+    });
+  }
+
+  listarUsuarios() {
+    return this.http.get<Usuario[]>(`${this.api}/usuarios`, { headers: this.adminHeaders() });
+  }
+
+  atualizarPerfil(id: number, perfil: string) {
+    return this.http.patch<Usuario>(`${this.api}/usuarios/${id}/perfil`, { perfil }, { headers: this.adminHeaders() });
   }
 
   logout() {

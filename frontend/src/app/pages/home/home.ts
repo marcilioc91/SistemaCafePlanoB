@@ -14,10 +14,12 @@ import { AuthService } from '../../services/auth.service';
 })
 export class Home {
   nomeUsuario: string = '';
+  isAdmin: boolean = false;
 
   constructor(private router: Router, private auth: AuthService) {
     const usuario = this.auth.getUsuarioLogado();
     this.nomeUsuario = usuario?.pessoa?.nome ?? usuario?.usuarioLogin ?? '';
+    this.isAdmin = this.auth.isAdmin();
   }
 
   irParaCadastroCliente() {
@@ -42,6 +44,10 @@ export class Home {
 
   irParaAuditoria() {
     this.router.navigate(['/auditoria']);
+  }
+
+  irParaGerenciarUsuarios() {
+    this.router.navigate(['/gerenciar-usuarios']);
   }
 
   logout() {

@@ -3,7 +3,9 @@ package com.sistemacafeplanob.backend.service;
 import com.sistemacafeplanob.backend.dto.CadastroRequestDTO;
 import com.sistemacafeplanob.backend.entity.Cliente;
 import com.sistemacafeplanob.backend.entity.Pessoa;
+import com.sistemacafeplanob.backend.entity.PerfilUsuario;
 import com.sistemacafeplanob.backend.entity.Usuario;
+import java.util.List;
 import com.sistemacafeplanob.backend.repository.ClienteRepository;
 import com.sistemacafeplanob.backend.repository.PessoaRepository;
 import com.sistemacafeplanob.backend.repository.UsuarioRepository;
@@ -26,6 +28,17 @@ public class UsuarioService {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+
+    public List<Usuario> listarTodos() {
+        return repository.findAll();
+    }
+
+    public Usuario atualizarPerfil(Long id, PerfilUsuario perfil) {
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+        usuario.setPerfil(perfil);
+        return repository.save(usuario);
+    }
 
     public Usuario autenticar(String login, String senha) {
         return repository.findByUsuarioLogin(login)
@@ -62,6 +75,7 @@ public class UsuarioService {
         usuario.setUsuarioLogin(dto.getUsuario());
         usuario.setEmail(dto.getEmail());
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
+        usuario.setPerfil(dto.getPerfil() != null ? dto.getPerfil() : PerfilUsuario.OPERADOR);
         usuario = repository.save(usuario);
 
         Cliente cliente = new Cliente();

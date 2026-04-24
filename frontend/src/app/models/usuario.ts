@@ -11,6 +11,7 @@ export interface Usuario {
   usuarioLogin: string;
   email: string;
   senha?: string;
+  perfil?: 'ADMIN' | 'OPERADOR';
 }
 
 export interface LoginRequest {
