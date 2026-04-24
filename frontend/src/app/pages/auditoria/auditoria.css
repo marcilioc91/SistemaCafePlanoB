@@ -29,7 +29,11 @@
 }
 
 .filtro-usuario {
-  min-width: 260px;
+  min-width: 220px;
+}
+
+.filtro-data {
+  min-width: 160px;
 }
 
 .auditoria-contagem {
@@ -79,6 +83,21 @@
 
 .col-desc {
   font-size: 0.9rem;
+}
+
+.auditoria-paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 0 4px;
+}
+
+.pagina-info {
+  font-size: 0.9rem;
+  color: #546e7a;
+  min-width: 120px;
+  text-align: center;
 }
 
 .badge-tipo {

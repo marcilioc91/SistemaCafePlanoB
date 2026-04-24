@@ -19,9 +19,19 @@
       </mat-select>
     </mat-form-field>
 
-    <button mat-stroked-button (click)="limparFiltro()" *ngIf="usuarioSelecionado">
+    <mat-form-field appearance="outline" class="filtro-data">
+      <mat-label>Data início</mat-label>
+      <input matInput type="date" [(ngModel)]="dataInicio" (ngModelChange)="filtrar()" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filtro-data">
+      <mat-label>Data fim</mat-label>
+      <input matInput type="date" [(ngModel)]="dataFim" (ngModelChange)="filtrar()" />
+    </mat-form-field>
+
+    <button mat-stroked-button (click)="limparFiltro()" *ngIf="temFiltroAtivo()">
       <mat-icon>clear</mat-icon>
-      Limpar filtro
+      Limpar filtros
     </button>
   </div>
 
@@ -39,7 +49,7 @@
     </div>
 
     <div *ngIf="logsFiltrados.length > 0" class="auditoria-tabela-wrapper">
-      <table mat-table [dataSource]="logsFiltrados" class="auditoria-tabela mat-elevation-z2">
+      <table mat-table [dataSource]="logsExibidos" class="auditoria-tabela mat-elevation-z2">
 
         <ng-container matColumnDef="dataHora">
           <th mat-header-cell *matHeaderCellDef>Data / Hora</th>
@@ -70,6 +80,16 @@
         <tr mat-header-row *matHeaderRowDef="colunas"></tr>
         <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
       </table>
+
+      <div class="auditoria-paginacao">
+        <button mat-icon-button (click)="paginaAnterior()" [disabled]="paginaAtual === 0" title="Página anterior">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <span class="pagina-info">Página {{ paginaAtual + 1 }} de {{ totalPaginas }}</span>
+        <button mat-icon-button (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas - 1" title="Próxima página">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
     </div>
   </ng-container>
 

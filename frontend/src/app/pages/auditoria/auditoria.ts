@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { AuditoriaService } from '../../services/auditoria.service';
@@ -28,6 +29,7 @@ interface UsuarioOpcao {
     MatIconModule,
     MatProgressSpinnerModule,
     MatFormFieldModule,
+    MatInputModule,
     MatSelectModule,
     MatChipsModule,
   ],
@@ -37,9 +39,16 @@ interface UsuarioOpcao {
 export class Auditoria implements OnInit {
   todosLogs: AuditoriaLog[] = [];
   logsFiltrados: AuditoriaLog[] = [];
+  logsExibidos: AuditoriaLog[] = [];
   usuarios: UsuarioOpcao[] = [];
   usuarioSelecionado: number | null = null;
+  dataInicio: string = '';
+  dataFim: string = '';
   carregando = true;
+
+  readonly itensPorPagina = 10;
+  paginaAtual = 0;
+  totalPaginas = 0;
 
   colunas = ['dataHora', 'usuarioNome', 'tipoOperacao', 'descricao'];
 
@@ -56,6 +65,7 @@ export class Auditoria implements OnInit {
         this.logsFiltrados = dados;
         this.extrairUsuarios(dados);
         this.carregando = false;
+        this.atualizarPagina();
         this.cdRef.detectChanges();
       },
       error: () => {
@@ -75,18 +85,59 @@ export class Auditoria implements OnInit {
   }
 
   filtrar() {
-    if (!this.usuarioSelecionado) {
-      this.logsFiltrados = this.todosLogs;
-    } else {
-      this.logsFiltrados = this.todosLogs.filter(
-        (l) => l.usuarioId === this.usuarioSelecionado
-      );
+    let resultado = [...this.todosLogs];
+
+    if (this.usuarioSelecionado) {
+      resultado = resultado.filter((l) => l.usuarioId === this.usuarioSelecionado);
     }
+
+    if (this.dataInicio) {
+      const inicio = new Date(this.dataInicio + 'T00:00:00');
+      resultado = resultado.filter((l) => new Date(l.dataHora) >= inicio);
+    }
+
+    if (this.dataFim) {
+      const fim = new Date(this.dataFim + 'T23:59:59');
+      resultado = resultado.filter((l) => new Date(l.dataHora) <= fim);
+    }
+
+    this.logsFiltrados = resultado;
+    this.paginaAtual = 0;
+    this.atualizarPagina();
   }
 
   limparFiltro() {
     this.usuarioSelecionado = null;
+    this.dataInicio = '';
+    this.dataFim = '';
     this.logsFiltrados = this.todosLogs;
+    this.paginaAtual = 0;
+    this.atualizarPagina();
+  }
+
+  private atualizarPagina() {
+    const inicio = this.paginaAtual * this.itensPorPagina;
+    this.logsExibidos = this.logsFiltrados.slice(inicio, inicio + this.itensPorPagina);
+    this.totalPaginas = Math.ceil(this.logsFiltrados.length / this.itensPorPagina);
+    this.cdRef.detectChanges();
+  }
+
+  paginaAnterior() {
+    if (this.paginaAtual > 0) {
+      this.paginaAtual--;
+      this.atualizarPagina();
+    }
+  }
+
+  proximaPagina() {
+    if (this.paginaAtual < this.totalPaginas - 1) {
+      this.paginaAtual++;
+      this.atualizarPagina();
+    }
+  }
+
+  temFiltroAtivo(): boolean {
+    return !!this.usuarioSelecionado || !!this.dataInicio || !!this.dataFim;
   }
 
   labelTipo(tipo: string): string {
