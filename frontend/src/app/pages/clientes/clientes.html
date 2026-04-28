@@ -13,13 +13,22 @@
     </div>
   </div>
 
-  @if (clientes.length === 0) {
-  <p class="sem-dados">Nenhum cliente cadastrado.</p>
-  } @else {
-  <table mat-table [dataSource]="clientes" class="clientes-tabela mat-elevation-z2">
+  <mat-form-field appearance="outline" class="campo-busca">
+    <mat-label>Buscar por nome</mat-label>
+    <input matInput [formControl]="filtroCtrl" [matAutocomplete]="auto" placeholder="Digite para buscar...">
+    <mat-icon matSuffix>search</mat-icon>
+    <mat-autocomplete #auto="matAutocomplete">
+      @for (nome of nomesFiltrados; track nome) {
+        <mat-option [value]="nome">{{ nome }}</mat-option>
+      }
+    </mat-autocomplete>
+  </mat-form-field>
+
+  <table mat-table matSort matSortActive="nome" matSortDirection="asc"
+         [dataSource]="dataSource" class="clientes-tabela mat-elevation-z2">
 
     <ng-container matColumnDef="nome">
-      <th mat-header-cell *matHeaderCellDef>Nome</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Nome</th>
       <td mat-cell *matCellDef="let c" class="uppercase">{{ c.pessoa.nome }}</td>
     </ng-container>
 
@@ -50,6 +59,12 @@
 
     <tr mat-header-row *matHeaderRowDef="colunas"></tr>
     <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell sem-dados" [attr.colspan]="colunas.length">
+        {{ filtroCtrl.value ? 'Nenhum cliente encontrado.' : 'Nenhum cliente cadastrado.' }}
+      </td>
+    </tr>
   </table>
-  }
+
+  <mat-paginator [pageSize]="10" [pageSizeOptions]="[10, 25, 50]" showFirstLastButtons></mat-paginator>
 </div>

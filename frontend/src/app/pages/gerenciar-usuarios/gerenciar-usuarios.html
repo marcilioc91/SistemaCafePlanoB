@@ -49,8 +49,8 @@
         </ng-container>
 
         <ng-container matColumnDef="acao">
-          <th mat-header-cell *matHeaderCellDef>Ação</th>
-          <td mat-cell *matCellDef="let u">
+          <th mat-header-cell *matHeaderCellDef>Ações</th>
+          <td mat-cell *matCellDef="let u" class="coluna-acoes">
             <button
               mat-stroked-button
               [disabled]="u.id === adminId"
@@ -58,6 +58,13 @@
               (click)="alternarPerfil(u)">
               <mat-icon>{{ u.perfil === 'ADMIN' ? 'person_remove' : 'admin_panel_settings' }}</mat-icon>
               {{ u.perfil === 'ADMIN' ? 'Remover Admin' : 'Tornar Admin' }}
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="abrirResetSenha(u)"
+              title="Redefinir senha">
+              <mat-icon>lock_reset</mat-icon>
             </button>
           </td>
         </ng-container>

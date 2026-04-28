@@ -57,6 +57,10 @@ export class AuthService {
     return this.http.patch<Usuario>(`${this.api}/usuarios/${id}/perfil`, { perfil }, { headers: this.adminHeaders() });
   }
 
+  resetSenha(id: number, novaSenha: string) {
+    return this.http.patch<string>(`${this.api}/usuarios/${id}/reset-senha`, { novaSenha }, { headers: this.adminHeaders() });
+  }
+
   logout() {
     sessionStorage.removeItem('usuario');
   }

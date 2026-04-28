@@ -33,6 +33,16 @@ public class UsuarioService {
         return repository.findAll();
     }
 
+    public void resetSenha(Long id, String novaSenha) {
+        if (novaSenha == null || novaSenha.isBlank()) {
+            throw new IllegalArgumentException("A nova senha não pode ser vazia.");
+        }
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));
+        usuario.setSenha(passwordEncoder.encode(novaSenha));
+        repository.save(usuario);
+    }
+
     public Usuario atualizarPerfil(Long id, PerfilUsuario perfil) {
         Usuario usuario = repository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado."));

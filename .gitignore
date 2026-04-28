@@ -38,3 +38,4 @@ backend/src/main/resources/
 Annotations
 *.sql
 novasImplementacoes.md
+.claude

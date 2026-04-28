@@ -16,6 +16,11 @@
   gap: 12px;
 }
 
+.campo-busca {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
 .clientes-tabela {
   width: 100%;
 }

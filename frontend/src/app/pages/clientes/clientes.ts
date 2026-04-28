@@ -1,6 +1,10 @@
-import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -111,18 +115,29 @@ export class HistoricoClienteDialog implements OnInit {
   standalone: true,
   imports: [
     CommonModule,
-    MatTableModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
     MatButtonModule,
+    MatFormFieldModule,
     MatIconModule,
+    MatInputModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatTableModule,
     MatDialogModule,
     RouterLink,
   ],
   templateUrl: './clientes.html',
   styleUrl: './clientes.css',
 })
-export class Clientes implements OnInit {
-  clientes: Cliente[] = [];
+export class Clientes implements OnInit, AfterViewInit {
+  dataSource = new MatTableDataSource<Cliente>();
   colunas = ['nome', 'telefone', 'obs', 'acoes'];
+  filtroCtrl = new FormControl('');
+  nomesFiltrados: string[] = [];
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
     private clienteService: ClienteService,
@@ -133,12 +148,31 @@ export class Clientes implements OnInit {
     private cdr: ChangeDetectorRef
   ) { }
 
-  ngOnInit() { this.carregar(); }
+  ngOnInit() {
+    this.filtroCtrl.valueChanges.subscribe(val => {
+      const v = (val ?? '').trim().toLowerCase();
+      this.dataSource.filter = v;
+      if (this.dataSource.paginator) this.dataSource.paginator.firstPage();
+      this.nomesFiltrados = v
+        ? [...new Set(this.dataSource.data.map(c => c.pessoa.nome).filter(n => n.toLowerCase().includes(v)))].slice(0, 8)
+        : [];
+    });
+    this.carregar();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.dataSource.sortingDataAccessor = (item, property) =>
+      property === 'nome' ? item.pessoa.nome.toLowerCase() : '';
+    this.dataSource.filterPredicate = (data, filter) =>
+      data.pessoa.nome.toLowerCase().includes(filter);
+  }
 
   carregar() {
     this.clienteService.listar().subscribe({
       next: dados => {
-        this.clientes = dados;
+        this.dataSource.data = dados;
         this.cdr.detectChanges();
       },
       error: () => {

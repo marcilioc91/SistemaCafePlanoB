@@ -3,6 +3,7 @@ package com.sistemaportocabral.backend.controller;
 import com.sistemaportocabral.backend.dto.AtualizarPerfilDTO;
 import com.sistemaportocabral.backend.dto.CadastroRequestDTO;
 import com.sistemaportocabral.backend.dto.LoginRequestDTO;
+import com.sistemaportocabral.backend.dto.ResetSenhaDTO;
 import com.sistemaportocabral.backend.entity.Usuario;
 import com.sistemaportocabral.backend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,22 @@ public class UsuarioController {
             return ResponseEntity.status(403).body("Acesso negado.");
         }
         return ResponseEntity.ok(service.listarTodos());
+    }
+
+    @PatchMapping("/usuarios/{id}/reset-senha")
+    public ResponseEntity<?> resetSenha(
+            @PathVariable Long id,
+            @RequestHeader(value = "X-Usuario-Perfil", required = false) String perfil,
+            @RequestBody ResetSenhaDTO dto) {
+        if (!"ADMIN".equals(perfil)) {
+            return ResponseEntity.status(403).body("Acesso negado.");
+        }
+        try {
+            service.resetSenha(id, dto.getNovaSenha());
+            return ResponseEntity.ok("Senha redefinida com sucesso.");
+        } catch (Exception e) {
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
     @PatchMapping("/usuarios/{id}/perfil")
