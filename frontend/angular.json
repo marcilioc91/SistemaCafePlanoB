@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "cafe-planob-frontend": {
+    "porto-cabral-frontend": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -66,10 +66,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "cafe-planob-frontend:build:production"
+              "buildTarget": "porto-cabral-frontend:build:production"
             },
             "development": {
-              "buildTarget": "cafe-planob-frontend:build:development"
+              "buildTarget": "porto-cabral-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
