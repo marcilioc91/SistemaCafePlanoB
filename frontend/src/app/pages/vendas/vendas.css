@@ -1,7 +1,23 @@
 .vendas-container {
   padding: 32px;
-  max-width: 960px;
+  max-width: 1400px;
   margin: 0 auto;
+}
+
+.vendas-body {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+}
+
+.produtos-panel {
+  flex: 1;
+  min-width: 0;
+}
+
+.carrinho-panel {
+  width: 420px;
+  flex-shrink: 0;
 }
 
 .vendas-header {
@@ -21,9 +37,6 @@
   width: 100%;
 }
 
-.carrinho-titulo {
-  margin-top: 32px;
-}
 
 .qtd-input {
   width: 56px;
