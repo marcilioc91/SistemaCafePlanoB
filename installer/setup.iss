@@ -10,7 +10,7 @@
 [Setup]
 AppName={#AppName}
 AppVersion={#AppVersion}
-AppPublisher=Porto Cabral
+AppPublisher=Marcilio Cabral
 DefaultDirName={autopf}\PortoCabral
 DefaultGroupName=Porto Cabral
 OutputBaseFilename=PortoCabral-Instalador
