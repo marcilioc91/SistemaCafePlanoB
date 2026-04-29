@@ -15,6 +15,7 @@ DefaultDirName={autopf}\PortoCabral
 DefaultGroupName=Porto Cabral
 OutputBaseFilename=PortoCabral-Instalador
 OutputDir=..\dist
+SetupIconFile=logo.ico
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
@@ -34,13 +35,14 @@ Source: "launcher\PortoCabral.ps1";    DestDir: "{app}"; Flags: ignoreversion
 Source: "launcher\PortoCabral.vbs";    DestDir: "{app}"; Flags: ignoreversion
 ; setup-db.ps1 e excluido automaticamente apos a instalacao
 Source: "setup-db.ps1"; DestDir: "{app}\setup"; Flags: ignoreversion deleteafterinstall
+Source: "logo.ico";    DestDir: "{app}";        Flags: ignoreversion
 
 ; =============================================================
 ;  Atalhos
 ; =============================================================
 [Icons]
-Name: "{group}\{#AppName}";         Filename: "{sys}\wscript.exe"; Parameters: """{app}\PortoCabral.vbs"""; WorkingDir: "{app}"
-Name: "{commondesktop}\{#AppName}"; Filename: "{sys}\wscript.exe"; Parameters: """{app}\PortoCabral.vbs"""; WorkingDir: "{app}"
+Name: "{group}\{#AppName}";         Filename: "{sys}\wscript.exe"; Parameters: """{app}\PortoCabral.vbs"""; WorkingDir: "{app}"; IconFilename: "{app}\logo.ico"
+Name: "{commondesktop}\{#AppName}"; Filename: "{sys}\wscript.exe"; Parameters: """{app}\PortoCabral.vbs"""; WorkingDir: "{app}"; IconFilename: "{app}\logo.ico"
 Name: "{group}\Desinstalar {#AppName}"; Filename: "{uninstallexe}"
 
 ; =============================================================
@@ -87,7 +89,8 @@ begin
   ed.Top    := Topo;
   ed.Left   := 0;
   ed.Width  := Pagina.SurfaceWidth;
-  ed.Text   := Valor;
+  ed.Text      := Valor;
+  ed.CharCase  := ecNormal;
   if Senha then ed.PasswordChar := '*';
   Result := ed;
 end;

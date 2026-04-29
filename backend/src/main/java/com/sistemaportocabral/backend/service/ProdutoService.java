@@ -5,6 +5,8 @@ import com.sistemaportocabral.backend.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.springframework.data.domain.Sort;
+
 import java.util.List;
 
 @Service
@@ -17,7 +19,7 @@ public class ProdutoService {
     private AuditoriaService auditoriaService;
 
     public List<Produto> listar() {
-        return repository.findAll();
+        return repository.findAll(Sort.by(Sort.Direction.ASC, "nome"));
     }
 
     public Produto salvar(Produto produto, Long usuarioId, String usuarioNome) {
