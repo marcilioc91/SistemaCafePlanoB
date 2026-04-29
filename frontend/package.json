@@ -1,5 +1,5 @@
 {
-  "name": "cafe-planob-frontend",
+  "name": "porto-cabral-frontend",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:cafe-planob-frontend": "node dist/cafe-planob-frontend/server/server.mjs"
+    "serve:ssr:porto-cabral-frontend": "node dist/porto-cabral-frontend/server/server.mjs"
   },
   "private": true,
   "packageManager": "npm@11.11.0",
