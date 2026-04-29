@@ -58,7 +58,11 @@ export class AuthService {
   }
 
   resetSenha(id: number, novaSenha: string) {
-    return this.http.patch<string>(`${this.api}/usuarios/${id}/reset-senha`, { novaSenha }, { headers: this.adminHeaders() });
+    return this.http.patch(
+      `${this.api}/usuarios/${id}/reset-senha`,
+      { novaSenha },
+      { headers: this.adminHeaders(), responseType: 'text' }
+    );
   }
 
   logout() {

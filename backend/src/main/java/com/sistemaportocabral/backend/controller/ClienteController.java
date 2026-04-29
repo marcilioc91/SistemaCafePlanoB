@@ -34,7 +34,7 @@ public class ClienteController {
 
     @PutMapping("/{id}")
     public ResponseEntity<?> atualizar(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @RequestBody Cliente cliente,
             @RequestHeader(value = "X-Usuario-Id", required = false) Long usuarioId,
             @RequestHeader(value = "X-Usuario-Nome", required = false) String usuarioNome) {
@@ -47,7 +47,7 @@ public class ClienteController {
 
     @DeleteMapping("/{id}")
     public void excluir(
-            @PathVariable Integer id,
+            @PathVariable Long id,
             @RequestHeader(value = "X-Usuario-Id", required = false) Long usuarioId,
             @RequestHeader(value = "X-Usuario-Nome", required = false) String usuarioNome) {
         service.excluir(id, usuarioId, usuarioNome);

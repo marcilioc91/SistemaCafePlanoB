@@ -111,7 +111,7 @@ export class CadastroModal {
     }).subscribe({
       next: () => this.dialogRef.close(true),
       error: (err) => {
-        this.erro = err.error ?? 'Erro ao realizar cadastro.';
+        this.erro = typeof err.error === 'string' ? err.error : 'Erro ao realizar cadastro.';
         this.cdr.markForCheck();
       }
     });
@@ -123,7 +123,7 @@ export class CadastroModal {
     const cliente: Cliente = {
       pessoa: {
         nome: this.conta.nome,
-        cpf: this.conta.cpf,
+        cpf: this.conta.cpf || undefined,
         telefone: this.conta.telefone || undefined,
       },
       obs: this.conta.obs || undefined,
@@ -131,7 +131,7 @@ export class CadastroModal {
     this.clienteService.salvar(cliente).subscribe({
       next: () => this.dialogRef.close(true),
       error: (err) => {
-        this.erro = err.error ?? 'Erro ao cadastrar cliente.';
+        this.erro = typeof err.error === 'string' ? err.error : 'Erro ao cadastrar cliente.';
         this.cdr.markForCheck();
       }
     });

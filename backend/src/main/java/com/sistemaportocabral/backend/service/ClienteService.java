@@ -59,7 +59,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public Cliente atualizar(Integer id, Cliente clienteAtualizado, Long usuarioId, String usuarioNome) {
+    public Cliente atualizar(Long id, Cliente clienteAtualizado, Long usuarioId, String usuarioNome) {
         Cliente existente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
         Pessoa pessoa = existente.getPessoa();
@@ -89,7 +89,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public void excluir(Integer id, Long usuarioId, String usuarioNome) {
+    public void excluir(Long id, Long usuarioId, String usuarioNome) {
         Cliente cliente = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
         Pessoa pessoa = cliente.getPessoa();

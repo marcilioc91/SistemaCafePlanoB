@@ -73,8 +73,9 @@
   color: #2e7d32;
 }
 
-.coluna-acoes {
+.acoes-wrapper{
   display: flex;
-  align-items: center;
+  width: 100%;
+  justify-content: space-between;
   gap: 8px;
 }

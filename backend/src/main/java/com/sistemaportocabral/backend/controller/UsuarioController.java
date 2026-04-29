@@ -54,7 +54,7 @@ public class UsuarioController {
         }
         try {
             service.resetSenha(id, dto.getNovaSenha());
-            return ResponseEntity.ok("Senha redefinida com sucesso.");
+            return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
