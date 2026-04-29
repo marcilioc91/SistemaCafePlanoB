@@ -53,7 +53,8 @@ Name: "{group}\Desinstalar {#AppName}"; Filename: "{uninstallexe}"
 Filename: "powershell.exe"; \
   Parameters: "-NonInteractive -ExecutionPolicy Bypass -File ""{app}\setup\setup-db.ps1"""; \
   StatusMsg: "Configurando banco de dados SQL Server..."; \
-  Flags: runascurrentuser waituntilterminated
+  Flags: runascurrentuser waituntilterminated; \
+  Check: FileExists(ExpandConstant('{app}\application.properties'))
 
 ; =============================================================
 ;  Codigo Pascal — Pagina customizada de configuracao do banco
@@ -209,7 +210,12 @@ begin
     'logging.level.root=WARN' + #13#10 +
     'logging.level.com.sistemaportocabral=INFO' + #13#10;
 
-  SaveStringToFile(arquivo, conteudo, False);
+  if not SaveStringToFile(arquivo, conteudo, False) then
+    MsgBox(
+      'Nao foi possivel criar o arquivo de configuracao:' + #13#10 +
+      arquivo + #13#10#13#10 +
+      'Verifique se voce tem permissao de escrita na pasta de instalacao.',
+      mbError, MB_OK);
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
