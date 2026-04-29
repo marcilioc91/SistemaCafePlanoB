@@ -1,6 +1,6 @@
 :host{
     display: flex;
-    height: 60dvh;
+    height: 88dvh;
     align-items: center;
     background: linear-gradient(rgba(255, 177, 255, 0.082), rgba(230, 228, 228, 0.85));
 }
@@ -11,7 +11,6 @@
     padding: 32px;
     border-radius: 12px;
     text-align: center;
-
     backdrop-filter: blur(12px);
 }
 
