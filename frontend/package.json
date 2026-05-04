@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "ng": "ng",
-    "start": "electron .",
+    "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -45,27 +45,27 @@
     "jsdom": "^28.0.0",
     "prettier": "^3.8.1",
     "typescript": "~5.9.2",
-    "vitest": "^4.0.8",
-    "build":{
-      "appId": "com.sistemaportocabral.app",
-      "productName": "Porto Cabral",
-      "directories": {
-        "output": "release"
-      },
-      "files": [
-        "dist/porto-cabral-frontend/**/*",
-        "main.js",
-        "package.json"
-      ],
-      "win": {
-        "target": "nsis",
-        "icon": "assets/logoPC.ico"
-      },
-      "nsis": {
-        "oneClick": false,
-        "perMachine": true,
-        "allowToChangeInstallationDirectory": true
-      }
+    "vitest": "^4.0.8"
+  },
+  "build": {
+    "appId": "com.sistemaportocabral.app",
+    "productName": "Porto Cabral",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/porto-cabral-frontend/**/*",
+      "main.js",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/logoPC.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": true,
+      "allowToChangeInstallationDirectory": true
     }
   }
 }
