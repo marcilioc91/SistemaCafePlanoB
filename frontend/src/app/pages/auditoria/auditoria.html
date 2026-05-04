@@ -29,26 +29,33 @@
       <input matInput type="date" [(ngModel)]="dataFim" (ngModelChange)="filtrar()" />
     </mat-form-field>
 
-    <button mat-stroked-button (click)="limparFiltro()" *ngIf="temFiltroAtivo()">
+    @if (temFiltroAtivo()) {
+    <button mat-stroked-button (click)="limparFiltro()">
       <mat-icon>clear</mat-icon>
       Limpar filtros
     </button>
+    }
   </div>
 
   <p class="auditoria-contagem">{{ logsFiltrados.length }} registro(s)</p>
 
-  <div *ngIf="carregando" class="auditoria-loading">
+  @if (carregando) {
+  <div class="auditoria-loading">
     <mat-spinner diameter="48"></mat-spinner>
     <p>Carregando registros...</p>
   </div>
-
-  <ng-container *ngIf="!carregando">
-    <div *ngIf="logsFiltrados.length === 0" class="auditoria-vazio">
+  }
+  @if (!carregando) {
+  <ng-container>
+    @if (logsFiltrados.length === 0) {
+    <div class="auditoria-vazio">
       <mat-icon>inbox</mat-icon>
       <p>Nenhum registro de auditoria encontrado.</p>
     </div>
+    }
 
-    <div *ngIf="logsFiltrados.length > 0" class="auditoria-tabela-wrapper">
+    @if (logsFiltrados.length > 0) {
+    <div class="auditoria-tabela-wrapper">
       <table mat-table [dataSource]="logsExibidos" class="auditoria-tabela mat-elevation-z2">
 
         <ng-container matColumnDef="dataHora">
@@ -86,11 +93,14 @@
           <mat-icon>chevron_left</mat-icon>
         </button>
         <span class="pagina-info">Página {{ paginaAtual + 1 }} de {{ totalPaginas }}</span>
-        <button mat-icon-button (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas - 1" title="Próxima página">
+        <button mat-icon-button (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas - 1"
+          title="Próxima página">
           <mat-icon>chevron_right</mat-icon>
         </button>
       </div>
     </div>
+    }
   </ng-container>
+  }
 
 </div>
