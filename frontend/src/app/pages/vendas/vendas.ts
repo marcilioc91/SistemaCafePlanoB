@@ -43,8 +43,9 @@ interface DadosConfirmacao {
     MatInputModule,
     MatButtonModule,
     MatTableModule,
-    MatIcon
-  ],
+    MatIcon,
+    MatDialogModule
+],
   templateUrl: './venda-confirmacao-dialog.html',
   styleUrl: './vendas.css',
 })

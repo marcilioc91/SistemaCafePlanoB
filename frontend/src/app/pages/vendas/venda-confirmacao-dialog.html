@@ -1,5 +1,5 @@
 <h2 style="padding: 24px 24px 0">Confirmar Venda</h2>
-<div style="padding: 0 24px 24px; min-width: 420px; max-width: 560px;">
+<mat-dialog-content style="min-width: 420px; max-width: 560px; max-height: 65vh; overflow-y: auto;">
     <p style="margin: 0 0 12px"><strong>Cliente:</strong> {{ data.cliente.pessoa.nome | uppercase }}</p>
 
     <table mat-table [dataSource]="data.itens" style="width:100%; margin-bottom: 12px;">
@@ -71,4 +71,4 @@
                 (click)="confirmar()">Confirmar
                 Venda</button>
         </div>
-</div>
+</mat-dialog-content>
