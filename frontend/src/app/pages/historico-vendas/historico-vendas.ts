@@ -2,11 +2,11 @@ import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogModule, MatDialogRef, MatDialogContent, MatDialogActions } from '@angular/material/dialog';
 import { MatFormFieldModule, MatFormField, MatLabel } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule, MatSelect } from '@angular/material/select';
+import { MatSelectModule, MatSelect, MatOption } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -16,6 +16,7 @@ import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { VendaResposta } from '../../models/venda';
 import { VendaService } from '../../services/venda.service';
+import { ProdutoService } from '../../services/produto.service';
 
 interface GrupoCliente {
   clienteId: number;
@@ -51,6 +52,7 @@ export class PagamentoDialog {
   constructor(
     private dialogRef: MatDialogRef<PagamentoDialog>,
     private vendaService: VendaService,
+    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: { venda: VendaResposta; total: number }
   ) {
     this.formaPagamento = data.venda.formaPagamento ?? '';
@@ -66,6 +68,7 @@ export class PagamentoDialog {
       next: () => this.dialogRef.close({ formaPagamento: this.formaPagamento, valorPago: valorFinal }),
       error: () => { this.erro = 'Erro ao salvar pagamento.'; }
     });
+    this.cdr.detectChanges();
   }
 
   cancelar() { this.dialogRef.close(null); }
@@ -307,20 +310,6 @@ export class HistoricoVendas implements OnInit {
     return mapa[forma] ?? forma ?? '—';
   }
 
-  abrirEdicaoPagamento(venda: VendaResposta) {
-    const ref = this.dialog.open(PagamentoDialog, {
-      width: '420px',
-      data: { venda, total: this.totalVenda(venda) }
-    });
-    ref.afterClosed().subscribe((resultado: { formaPagamento: string; valorPago: number } | null) => {
-      if (!resultado) return;
-      venda.formaPagamento = resultado.formaPagamento;
-      venda.valorPago = resultado.valorPago;
-      this.carregar();
-      this.snackBar.open('Pagamento atualizado!', 'Fechar', { duration: 3000 });
-    });
-  }
-
   abrirPagamentoTotal(grupo: GrupoCliente) {
     const ref = this.dialog.open(PagamentoTotalDialog, {
       width: '420px',
@@ -365,4 +354,110 @@ export class HistoricoVendas implements OnInit {
       });
     });
   }
+
+  // No historico-vendas.ts, dentro da classe HistoricoVendas
+
+  abrirEdicaoItens(venda: VendaResposta) {
+    const ref = this.dialog.open(EdicaoItensDialog, {
+      width: '600px',
+      data: { venda }
+    });
+
+    ref.afterClosed().subscribe(confirmado => {
+      if (confirmado) {
+        this.snackBar.open('Itens da venda atualizados!', 'Fechar', { duration: 3000 });
+        this.carregar(); // Recarrega a lista para atualizar totais e saldos
+      }
+    });
+  }
+}
+
+// ── Diálogo de edição de itens da venda ──────────────────────────────────────
+@Component({
+  selector: 'app-edicao-itens-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatTableModule,
+    MatIconModule,
+    MatDialogContent,
+    MatDialogActions,
+    MatOption,
+    MatAutocompleteModule
+],
+  templateUrl: './editar-pedido-dialog.html',
+  styleUrl: './historico-vendas.css',
+})
+export class EdicaoItensDialog implements OnInit {
+  selecionarProduto(item: any, produtoSelecionado: any) {
+    item.produto.id = produtoSelecionado.id;
+    item.produto.nome = produtoSelecionado.nome;
+    item.precoUnitario = produtoSelecionado.preco;
+  }
+  produtosFiltrados: any;
+
+  filtrarProdutos(item: any) {
+    const termo = item.produto.nome.toLowerCase();
+    this.produtosFiltrados = this.todosProdutos.filter(p =>
+      p.nome.toLowerCase().includes(termo)
+    );
+  }
+  itensEdicao: any[];
+  todosProdutos: any[] = [];
+
+  constructor(
+    private dialogRef: MatDialogRef<EdicaoItensDialog>,
+    private vendaService: VendaService,
+    private produtoService: ProdutoService,
+    private cdr: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data: { venda: VendaResposta }
+  ) {
+    // Criamos uma cópia profunda para não alterar a tela de fundo antes de salvar
+    this.itensEdicao = data.venda.itens.map(i => ({ ...i }));
+  }
+  ngOnInit(): void {
+    this.produtoService.listar().subscribe({
+      next: produtos => {
+        this.todosProdutos = produtos;
+      }
+    });
+  }
+
+  remover(item: any) {
+    console.log('Removendo item:', item);
+
+    this.itensEdicao = this.itensEdicao.filter(i => {
+      const idParaRemover = item.produto?.id ?? item.produtoId;
+      const idAtual = i.produto?.id ?? i.produtoId;
+      return idAtual !== idParaRemover;
+    });
+    this.cdr.detectChanges();
+  }
+
+  calcularNovoTotal() {
+    return this.itensEdicao.reduce((acc, i) => acc + (i.quantidade * i.precoUnitario), 0);
+  }
+
+  salvar() {
+    // Aqui chamamos o serviço para atualizar os itens
+    const payload = {
+      produtos: this.itensEdicao.map(i => ({
+        produtoId: i.produto.id,
+        quantidade: i.quantidade
+      }))
+    };
+
+    console.log('Payload para atualização:', payload);
+
+    this.vendaService.atualizarItens(this.data.venda.id, payload).subscribe({
+      next: () => this.dialogRef.close(true),
+      error: (err) => alert('Erro ao atualizar itens da venda.' + err)
+    });
+  }
+
+  cancelar() { this.dialogRef.close(null); }
 }

@@ -73,9 +73,20 @@
   color: #2e7d32;
 }
 
-.acoes-wrapper{
+.acoes-wrapper {
   display: flex;
   width: 100%;
   justify-content: space-between;
   gap: 8px;
+}
+
+.reset-subtitulo {
+  color: #555;
+  margin-bottom: 16px;
+}
+
+.reset-erro {
+  color: #c62828;
+  font-size: 0.85rem;
+  margin-top: 4px;
 }

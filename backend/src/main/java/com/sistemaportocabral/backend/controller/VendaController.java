@@ -45,4 +45,10 @@ public class VendaController {
         }
         return ResponseEntity.ok(service.gerarRelatorioInventario());
     }
+
+    @PutMapping("/{id}/itens")
+    public ResponseEntity<Venda> atualizarItens(@PathVariable Long id, @RequestBody VendaRequestDTO dto) {
+        Venda vendaAtualizada = service.atualizarItens(id, dto);
+        return ResponseEntity.ok(vendaAtualizada);
+    }
 }

@@ -3,8 +3,9 @@ const path = require('path');
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 1280,
+    width: 1200,
     height: 800,
+    icon: path.join(__dirname, 'src/assets/logoPC.ico'),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

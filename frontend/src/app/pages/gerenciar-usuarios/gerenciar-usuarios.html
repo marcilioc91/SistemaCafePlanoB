@@ -10,18 +10,24 @@
     </h2>
   </div>
 
-  <div *ngIf="carregando" class="gerenciar-loading">
+  @if (carregando) {
+  <div class="gerenciar-loading">
     <mat-spinner diameter="48"></mat-spinner>
     <p>Carregando usuários...</p>
   </div>
+  }
 
-  <ng-container *ngIf="!carregando">
-    <div *ngIf="usuarios.length === 0" class="gerenciar-vazio">
+  @if (!carregando) {
+  <ng-container>
+    @if (usuarios.length === 0) {
+    <div class="gerenciar-vazio">
       <mat-icon>inbox</mat-icon>
       <p>Nenhum usuário cadastrado.</p>
     </div>
+    }
 
-    <div *ngIf="usuarios.length > 0" class="gerenciar-tabela-wrapper">
+    @if (usuarios.length > 0) {
+    <div class="gerenciar-tabela-wrapper">
       <table mat-table [dataSource]="usuarios" class="gerenciar-tabela mat-elevation-z2">
 
         <ng-container matColumnDef="nome">
@@ -68,6 +74,8 @@
         <tr mat-row *matRowDef="let row; columns: colunas;"></tr>
       </table>
     </div>
+    }
   </ng-container>
+  }
 
 </div>

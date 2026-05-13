@@ -18,28 +18,8 @@ import { Usuario } from '../../models/usuario';
   selector: 'app-reset-senha-dialog',
   standalone: true,
   imports: [FormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDialogModule, MatIconModule],
-  template: `
-    <h2 mat-dialog-title>Redefinir senha</h2>
-    <mat-dialog-content>
-      <p class="reset-subtitulo">Usuário: <strong>{{ data.nomeUsuario }}</strong></p>
-      <mat-form-field appearance="outline" style="width:100%">
-        <mat-label>Nova senha</mat-label>
-        <input matInput [(ngModel)]="novaSenha" [type]="ocultarSenha ? 'password' : 'text'" autocomplete="new-password">
-        <button matSuffix mat-icon-button (click)="ocultarSenha = !ocultarSenha" type="button">
-          <mat-icon>{{ ocultarSenha ? 'visibility_off' : 'visibility' }}</mat-icon>
-        </button>
-      </mat-form-field>
-      <p class="reset-erro" *ngIf="erro">{{ erro }}</p>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button (click)="fechar()">Cancelar</button>
-      <button mat-raised-button color="primary" (click)="confirmar()">Redefinir</button>
-    </mat-dialog-actions>
-  `,
-  styles: [`
-    .reset-subtitulo { color: #555; margin-bottom: 16px; }
-    .reset-erro { color: #c62828; font-size: 0.85rem; margin-top: 4px; }
-  `],
+  templateUrl: './reset-senha-dialog.html',
+  styleUrl: './gerenciar-usuarios.css',
 })
 export class ResetSenhaDialog {
   novaSenha = '';

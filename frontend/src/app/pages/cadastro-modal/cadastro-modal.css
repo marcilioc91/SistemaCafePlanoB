@@ -1,6 +1,7 @@
 :host{
     display: flex;
-    height: 100dvh;
+    height: 83vh;
+    justify-content: center;
     align-items: center;
     background: linear-gradient(rgba(255, 177, 255, 0.082), rgba(230, 228, 228, 0.85));
 }
@@ -29,4 +30,11 @@
     color: #d32f2f;
     font-size: 0.85rem;
     margin-top: 8px;
+}
+
+.text-step {
+    color: #888;
+    top: 100%;
+    width: 100%;
+    text-align: center;
 }

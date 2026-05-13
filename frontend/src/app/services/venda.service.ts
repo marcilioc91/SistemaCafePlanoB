@@ -7,6 +7,10 @@ import { AuthService } from './auth.service';
   providedIn: 'root',
 })
 export class VendaService {
+  // No venda.service.ts
+atualizarItens(vendaId: number, dados: { produtos: any[] }) {
+  return this.http.put(`${this.api}/${vendaId}/itens`, dados);
+}
   private api = 'http://localhost:8080/vendas';
 
   constructor(private http: HttpClient, private auth: AuthService) {}

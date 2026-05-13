@@ -1,21 +1,21 @@
 <div class="cadastro-container">
-    <h2>{{ modoCliente ? 'Cadastrar Cliente' : 'Cadastro' }}</h2>
 
     <form class="cadastro-form">
 
         @if (step === 0) {
         <div>
-            <h5>{{ modoCliente ? '' : 'Tela 1 de 2' }}</h5>
+            <h4>{{ modoCliente ? 'Cadastrar Cliente' : 'Cadastro' }}</h4>
+            <p class="text-step">{{ modoCliente ? '' : 'Tela 1 de 2' }}</p>
 
             <mat-form-field class="full-width">
                 <mat-label>Nome Completo</mat-label>
-                <input matInput [(ngModel)]="conta.nome" name="nome" (ngModelChange)="conta.nome = $event.toUpperCase()">
+                <input matInput [(ngModel)]="conta.nome" name="nome"
+                    (ngModelChange)="conta.nome = $event.toUpperCase()">
             </mat-form-field>
 
             <mat-form-field class="full-width">
                 <mat-label>CPF</mat-label>
-                <input matInput [(ngModel)]="conta.cpf" name="cpf" mask="000.000.000-00"
-                (blur)="validarCpf()">
+                <input matInput [(ngModel)]="conta.cpf" name="cpf" mask="000.000.000-00" (blur)="validarCpf()">
             </mat-form-field>
 
             @if (!modoCliente) {
@@ -59,7 +59,8 @@
 
         @if (step === 1 && !modoCliente) {
         <div>
-            <h5>Tela 2 de 2</h5>
+            <h4>{{ modoCliente ? '' : 'Dados para Login' }}</h4>
+            <p class="text-step">Tela 2 de 2</p>
 
             <mat-form-field class="full-width">
                 <mat-label>Login</mat-label>
@@ -79,8 +80,7 @@
                 Voltar
             </button>
 
-            <button mat-raised-button color="primary" (click)="salvar()"
-                [disabled]="!conta.usuario || !conta.senha">
+            <button mat-raised-button color="primary" (click)="salvar()" [disabled]="!conta.usuario || !conta.senha">
                 Concluir
             </button>
 

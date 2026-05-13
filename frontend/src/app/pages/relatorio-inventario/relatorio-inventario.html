@@ -10,18 +10,25 @@
     </h2>
   </div>
 
-  <div *ngIf="carregando" class="relatorio-loading">
+  @if (carregando) {
+  <div class="relatorio-loading">
     <mat-spinner diameter="48"></mat-spinner>
     <p>Carregando dados...</p>
   </div>
+  }
 
-  <ng-container *ngIf="!carregando">
-    <div *ngIf="itens.length === 0" class="relatorio-vazio">
+  @if (!carregando) {
+  <ng-container>
+
+    @if (itens.length === 0) {
+    <div class="relatorio-vazio">
       <mat-icon>inbox</mat-icon>
       <p>Nenhuma venda registrada.</p>
     </div>
+    }
 
-    <div *ngIf="itens.length > 0" class="relatorio-tabela-wrapper">
+    @if (itens.length > 0) {
+    <div class="relatorio-tabela-wrapper">
       <table mat-table [dataSource]="itens" [trackBy]="trackByProduto" class="relatorio-tabela mat-elevation-z2">
 
         <ng-container matColumnDef="nomeProduto">
@@ -58,14 +65,12 @@
 
         <ng-container matColumnDef="lucro">
           <th mat-header-cell *matHeaderCellDef class="col-num">Lucro / Despesa</th>
-          <td mat-cell *matCellDef="let row" class="col-num"
-              [class.lucro-positivo]="row.lucro >= 0"
-              [class.lucro-negativo]="row.lucro < 0">
+          <td mat-cell *matCellDef="let row" class="col-num" [class.lucro-positivo]="row.lucro >= 0"
+            [class.lucro-negativo]="row.lucro < 0">
             {{ row.lucro | currency:'BRL':'symbol':'1.2-2' }}
           </td>
-          <td mat-footer-cell *matFooterCellDef class="col-num"
-              [class.lucro-positivo]="totalLucro >= 0"
-              [class.lucro-negativo]="totalLucro < 0">
+          <td mat-footer-cell *matFooterCellDef class="col-num" [class.lucro-positivo]="totalLucro >= 0"
+            [class.lucro-negativo]="totalLucro < 0">
             <strong>{{ totalLucro | currency:'BRL':'symbol':'1.2-2' }}</strong>
           </td>
         </ng-container>
@@ -75,6 +80,7 @@
         <tr mat-footer-row *matFooterRowDef="colunas" class="rodape-totais"></tr>
       </table>
     </div>
+    }
   </ng-container>
-
+  }
 </div>

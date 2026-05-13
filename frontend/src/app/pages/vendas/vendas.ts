@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIconModule, MatIcon } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTableModule } from '@angular/material/table';
@@ -18,6 +18,7 @@ import { VendaService } from '../../services/venda.service';
 import { ClienteService } from '../../services/cliente.service';
 import { AuthService } from '../../services/auth.service';
 import { formatarTelefone } from '../../utils/utils';
+import { Footer } from '../../footer/footer';
 
 interface ItemCarrinho {
   produto: Produto;
@@ -34,13 +35,23 @@ interface DadosConfirmacao {
 @Component({
   selector: 'app-venda-confirmacao-dialog',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatFormFieldModule, MatSelectModule, MatInputModule, MatButtonModule, MatTableModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    MatInputModule,
+    MatButtonModule,
+    MatTableModule,
+    MatIcon
+  ],
   templateUrl: './venda-confirmacao-dialog.html',
+  styleUrl: './vendas.css',
 })
 export class VendaConfirmacaoDialog {
-  colunas = ['produto', 'qtd', 'subtotal'];
+  colunas = ['produto', 'quantidade', 'subtotal', 'acoes'];
   formaPagamento = '';
-  valorPago = 0;
+  valorPago: number;
 
   formas = [
     { valor: 'DINHEIRO', label: 'Dinheiro' },
@@ -54,7 +65,12 @@ export class VendaConfirmacaoDialog {
   constructor(
     private dialogRef: MatDialogRef<VendaConfirmacaoDialog>,
     @Inject(MAT_DIALOG_DATA) public data: DadosConfirmacao
-  ) { }
+  ) {
+    this.valorPago = this.calcularValorNoDialogo();
+  }
+  calcularValorNoDialogo(): number {
+    return this.data.itens.reduce((acc, i) => acc + i.produto.preco * i.quantidade, 0);
+  }
 
   confirmar() {
     const vPago = this.formaPagamento === 'PENDENTE' ? 0 : this.valorPago;
@@ -62,6 +78,21 @@ export class VendaConfirmacaoDialog {
   }
 
   cancelar() { this.dialogRef.close(null); }
+
+  remover(produtoId: number) {
+
+    // const index = this.data.itens.findIndex(i => i.produto.id === produtoId);
+    // if (index !== -1) {
+      // this.data.itens.splice(index, 1);
+      this.data.itens = this.data.itens.filter(i => i.produto.id !== produtoId);
+    // }
+
+    this.valorPago = this.calcularValorNoDialogo();
+
+    if (this.data.itens.length === 0) {
+      this.dialogRef.close(null);
+    }
+  }
 }
 
 // ── Página de vendas ───────────────────────────────────────────────────────────
@@ -80,6 +111,7 @@ export class VendaConfirmacaoDialog {
     MatInputModule,
     MatAutocompleteModule,
     MatDialogModule,
+    Footer
   ],
   templateUrl: './vendas.html',
   styleUrl: './vendas.css',
@@ -92,7 +124,7 @@ export class Vendas implements OnInit {
   carrinho: ItemCarrinho[] = [];
   clienteSelecionado: Cliente | null = null;
   clienteSearchText = '';
-  loading = true;
+  carregando = true;
 
   colunasProdutos = ['nome', 'preco', 'estoque', 'acoes'];
   colunasCarrinho = ['produto', 'preco', 'quantidade', 'subtotal', 'acoes'];
@@ -104,18 +136,19 @@ export class Vendas implements OnInit {
     private auth: AuthService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
     this.produtoService.listar().subscribe({
       next: res => {
         this.produtos = res;
-        this.loading = false;
+        this.carregando = false;
       },
       error: () => {
         this.snackBar.open('Erro ao carregar produtos.', 'Fechar', { duration: 3000 });
-        this.loading = false;
+        this.carregando = false;
       }
     });
     this.clienteService.listar().subscribe({
@@ -146,17 +179,14 @@ export class Vendas implements OnInit {
     } else {
       this.carrinho = [...this.carrinho, { produto, quantidade: 1 }];
     }
-  }
-
-  remover(produto: Produto) {
-    this.carrinho = this.carrinho.filter(i => i.produto.id !== produto.id);
+    this.snackBar.open('Produto adicionado ao carrinho.', 'Fechar', { duration: 3000 });
   }
 
   total(): number {
     return this.carrinho.reduce((acc, i) => acc + i.produto.preco * i.quantidade, 0);
   }
 
-  finalizar() {
+  abrirCarrinho() {
     if (!this.clienteSelecionado) {
       this.snackBar.open('Selecione um cliente para continuar.', 'Fechar', { duration: 3000 });
       return;
@@ -177,11 +207,12 @@ export class Vendas implements OnInit {
       data: {
         cliente: this.clienteSelecionado,
         itens: this.carrinho,
-        total: this.total(),
       }
     });
 
     ref.afterClosed().subscribe((resultado: { formaPagamento: string; valorPago: number } | null) => {
+      this.carrinho = [...ref.componentInstance.data.itens];
+      this.cdr.detectChanges();
       if (!resultado) return;
 
       const venda = {
@@ -207,5 +238,9 @@ export class Vendas implements OnInit {
         }
       });
     });
+  }
+
+  quantidadeTotalNoCarrinho(): number {
+    return this.carrinho.reduce((acc, item) => acc + item.quantidade, 0);
   }
 }

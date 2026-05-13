@@ -126,4 +126,42 @@ public class VendaService {
 
         return resultado;
     }
+
+    @Transactional
+    public Venda atualizarItens(Long id, VendaRequestDTO dto) {
+        Venda venda = vendaRepository.findById(id.intValue())
+                .orElseThrow(() -> new RuntimeException("Venda não encontrada: " + id));
+
+        // 1. Devolver o estoque antigo
+        for (VendaItem item : venda.getItens()) {
+            Produto p = item.getProduto();
+            p.setEstoque(p.getEstoque() + item.getQuantidade());
+            produtoRepository.save(p);
+
+            entityManager.remove(item);
+        }
+
+        // 2. Limpar itens antigos (assumindo que VendaItem tenha Cascade.ALL ou delete manual)
+        venda.getItens().clear();
+        vendaRepository.save(venda);
+
+        // 3. Adicionar novos itens e baixar estoque
+        for (VendaProdutoRequestDTO itemDto : dto.getProdutos()) {
+            Produto produto = produtoRepository.findById(itemDto.getProdutoId())
+                    .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+
+            VendaItem novoItem = new VendaItem();
+            novoItem.setVenda(venda);
+            novoItem.setProduto(produto);
+            novoItem.setQuantidade(itemDto.getQuantidade());
+            novoItem.setPrecoUnitario(produto.getPreco());
+
+            entityManager.persist(novoItem);
+
+            produto.setEstoque(produto.getEstoque() - itemDto.getQuantidade());
+            produtoRepository.save(produto);
+        }
+
+        return vendaRepository.save(venda);
+    }
 }

@@ -1,0 +1,17 @@
+<footer class="meu-rodape">
+    <div class="footer-content">
+        <span>Carrinho de compras</span>
+
+        <div class="carrinho-resumo">
+            <button mat-raised-button [disabled]="itensNoCarrinho === 0" (click)="finalizarClick()">
+                <mat-icon
+                [matBadge]="itensNoCarrinho"
+                matBadgeColor="warn"
+                [matBadgeHidden]="itensNoCarrinho === 0">
+                    shopping_cart
+                </mat-icon>
+                <span>Ver Carrinho</span>
+            </button>
+        </div>
+    </div>
+</footer>

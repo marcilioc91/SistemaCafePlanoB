@@ -13,7 +13,7 @@
       <input matInput [(ngModel)]="filtroCliente" [matAutocomplete]="autoCliente" placeholder="Buscar cliente...">
       <mat-autocomplete #autoCliente="matAutocomplete">
         @for (nome of clientesSugeridos; track nome) {
-          <mat-option [value]="nome">{{ nome }}</mat-option>
+        <mat-option [value]="nome">{{ nome }}</mat-option>
         }
       </mat-autocomplete>
     </mat-form-field>
@@ -106,38 +106,39 @@
               <th mat-header-cell *matHeaderCellDef>Produto</th>
               <td mat-cell *matCellDef="let item">{{ item.produto.nome }}</td>
             </ng-container>
+
             <ng-container matColumnDef="quantidade">
               <th mat-header-cell *matHeaderCellDef>Qtd.</th>
               <td mat-cell *matCellDef="let item">{{ item.quantidade }}</td>
             </ng-container>
+
             <ng-container matColumnDef="precoUnitario">
               <th mat-header-cell *matHeaderCellDef>Preço Unit.</th>
               <td mat-cell *matCellDef="let item">R$ {{ item.precoUnitario | number:'1.2-2' }}</td>
             </ng-container>
+
             <ng-container matColumnDef="subtotal">
               <th mat-header-cell *matHeaderCellDef>Subtotal</th>
               <td mat-cell *matCellDef="let item">R$ {{ item.quantidade * item.precoUnitario | number:'1.2-2' }}</td>
             </ng-container>
+            
             <tr mat-header-row *matHeaderRowDef="colunasItens"></tr>
             <tr mat-row *matRowDef="let row; columns: colunasItens;"></tr>
           </table>
-
+          
           <div class="rodape-venda">
             <span>Atendido por: <strong>{{venda.usuario.pessoa.nome || venda.usuario.usuarioLogin}}</strong></span>
+
             <div class="rodape-pagamento">
-              @if ((venda.valorPago ?? 0) < totalVenda(venda)) { <span class="pendente">
-                Pendente: R$ {{ (totalVenda(venda) - (venda.valorPago ?? 0)) | number:'1.2-2' }}
-                </span>
-                } @else {
-                <span class="pago">Pago</span>
-                }
-                <button mat-icon-button (click)="abrirEdicaoPagamento(venda)" title="Editar pagamento">
+                <span class="pendente">Editar pedido</span>
+                <button mat-icon-button (click)="abrirEdicaoItens(venda)" title="Editar pagamento">
                   <mat-icon>edit</mat-icon>
                 </button>
             </div>
           </div>
 
         </mat-expansion-panel>
+        <!-- Exemplo de botão para colocar junto aos detalhes da venda -->
         }
       </mat-accordion>
 
@@ -145,7 +146,7 @@
       <div class="rodape-grupo">
         <button mat-raised-button color="accent" (click)="abrirPagamentoTotal(grupo)">
           <mat-icon>payments</mat-icon>
-          Quitar total pendente &nbsp;·&nbsp; R$ {{ grupo.totalPendente | number:'1.2-2' }}
+          Realizar pagamento&nbsp;·&nbsp; (Valor total: R$ {{ grupo.totalPendente | number:'1.2-2' }})
         </button>
       </div>
       }

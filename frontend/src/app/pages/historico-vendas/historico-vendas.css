@@ -87,3 +87,20 @@
   justify-content: flex-end;
   padding: 16px 0 4px;
 }
+
+.mat-mdc-cell .mat-mdc-form-field {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.mat-mdc-cell .mat-mdc-form-field-wrapper {
+  padding-bottom: 0;
+}
+
+.editar-pedido-container {
+  margin-top: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
