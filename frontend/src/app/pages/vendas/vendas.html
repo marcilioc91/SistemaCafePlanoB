@@ -44,14 +44,21 @@
 
         <ng-container matColumnDef="estoque">
           <th mat-header-cell *matHeaderCellDef>Estoque</th>
-          <td mat-cell *matCellDef="let p">{{ p.estoque }}</td>
+          <td mat-cell *matCellDef="let p"
+          [class.estoque-baixo]="getEstoqueDisponivel(p) <= 5"
+          [class.estoque-zero]="getEstoqueDisponivel(p) === 0">
+            {{ getEstoqueDisponivel(p) }}
+          </td>
         </ng-container>
 
         <ng-container matColumnDef="acoes">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let p">
-            <button mat-icon-button color="primary" (click)="adicionar(p)" [disabled]="p.estoque === 0"
-              title="Adicionar ao carrinho">
+            <button
+            mat-icon-button color="primary"
+            (click)="adicionar(p)"
+            [disabled]="getEstoqueDisponivel(p) <= 0"
+            title="Adicionar ao carrinho">
               <mat-icon>add_shopping_cart</mat-icon>
             </button>
           </td>

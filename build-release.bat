@@ -15,7 +15,7 @@ set ANGULAR_DIST=%FRONTEND_DIR%\dist\porto-cabral-frontend\browser
 
 :: ---- 1. Build do Frontend Angular ----
 echo.
-echo [1/3] Compilando frontend Angular (producao)...
+echo [1/5] Compilando frontend Angular (producao)...
 cd /d "%FRONTEND_DIR%"
 call npm run build -- --configuration production
 if %errorlevel% neq 0 (
@@ -27,7 +27,7 @@ if %errorlevel% neq 0 (
 
 :: ---- 2. Copiar frontend para os recursos estaticos do backend ----
 echo.
-echo [2/3] Copiando arquivos do frontend para o backend...
+echo [2/5] Copiando arquivos do frontend para o backend...
 if exist "%STATIC_DIR%" rmdir /s /q "%STATIC_DIR%"
 mkdir "%STATIC_DIR%"
 
@@ -47,7 +47,7 @@ echo Arquivos copiados com sucesso para: %STATIC_DIR%
 
 :: ---- 3. Build do Backend Spring Boot ----
 echo.
-echo [3/3] Compilando backend Spring Boot (pode demorar alguns minutos)...
+echo [3/5] Compilando backend Spring Boot (pode demorar alguns minutos)...
 cd /d "%BACKEND_DIR%"
 call mvnw.cmd package -DskipTests
 if %errorlevel% neq 0 (
@@ -57,17 +57,43 @@ if %errorlevel% neq 0 (
     exit /b 1
 )
 
+:: ---- 4. Integrar com Electron ----
+echo.
+echo [4/5] Integrando JAR ao Electron...
+set ELECTRON_DIR=%ROOT%electron
+set ELECTRON_RESOURCES=%ELECTRON_DIR%\resources
+
+:: Cria a pasta de recursos no Electron se não existir
+if not exist "%ELECTRON_RESOURCES%" mkdir "%ELECTRON_RESOURCES%"
+
+:: Copia o JAR gerado para dentro da pasta do Electron
+copy /y "%BACKEND_DIR%\target\backend-0.0.1-SNAPSHOT.jar" "%ELECTRON_RESOURCES%\backend.jar"
+if %errorlevel% neq 0 (
+    echo ERRO: Falha ao copiar o JAR para o Electron.
+    pause
+    exit /b 1
+)
+echo JAR copiado para: %ELECTRON_RESOURCES%\backend.jar
+
+:: ---- 5. Gerar o Executável do Electron (.exe) ----
+echo.
+echo [5/5] Gerando executável do Electron...
+cd /d "%FRONTEND_DIR%"
+
+:: Certifique-se de que o electron-builder está instalado no projeto electron
+call npm run dist
+if %errorlevel% neq 0 (
+    echo ERRO: Falha ao gerar o executável do Electron.
+    pause
+    exit /b 1
+)
+echo Executável do Electron gerado com sucesso!
+
 echo.
 echo ============================================
 echo   BUILD CONCLUIDO COM SUCESSO!
 echo ============================================
 echo.
-echo JAR gerado: backend\target\backend-0.0.1-SNAPSHOT.jar
-echo.
-echo Proximo passo: gerar o instalador
-echo   1. Instale o Inno Setup 6 (https://jrsoftware.org/isdl.php)
-echo   2. Abra o arquivo: installer\setup.iss
-echo   3. Clique em "Compile" (Ctrl+F9)
-echo   4. O instalador sera gerado em: dist\PortoCabral-Instalador.exe
+echo Executável disponibilizado na pasta: %ELECTRON_DIR%\dist
 echo.
 pause

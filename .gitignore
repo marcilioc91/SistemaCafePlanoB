@@ -1,3 +1,6 @@
+# ==========================================
+# BACKEND (Java / Spring Boot / Maven)
+# ==========================================
 HELP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
@@ -22,21 +25,70 @@ target/
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+# ==========================================
+# FRONTEND (Angular / Node)
+# ==========================================
 
-### Arquivos do projeto ignorados ###
+# Compiled output
+frontend/dist/
+frontend/tmp/
+frontend/out-tsc/
+frontend/bazel-out/
+
+# Node
+frontend/node_modules/
+npm-debug.log
+yarn-error.log
+
+# Angular cache
+frontend/.angular/
+
+# Miscellaneous
+.sass-cache/
+/connect.lock
+/coverage
+/libpeerconnection.log
+testem.log
+/typings
+__screenshots__/
+
+frontend/.editorconfig
+frontend/.prettierrc
+
+# ==========================================
+# ELECTRON
+# ==========================================
+electron
+
+# ==========================================
+# IDEs e Editores
+# ==========================================
+frontend/.vscode/
+.history/
+*.sublime-workspace
+*.launch
+.c9/
+
+# ==========================================
+# SISTEMA OPERACIONAL
+# ==========================================
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# ARQUIVOS DO PROJETO IGNORADOS
+# ==========================================
 backend/src/main/resources/
 *.zip
-Annotations
+*.7z
 *.sql
+Annotations
 novasImplementacoes.md
-.claude
 Melhorias.md
+.claude

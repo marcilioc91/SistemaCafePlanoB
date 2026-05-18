@@ -1,6 +1,6 @@
 {
   "name": "porto-cabral-frontend",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Frontend do Sistema Porto Cabral",
   "main": "main.js",
   "scripts": {
@@ -50,17 +50,31 @@
   "build": {
     "appId": "com.sistemaportocabral.app",
     "productName": "Porto Cabral",
+    "copyright": "© 2026 Marcílio Cabral. Todos os direitos reservados.",
+    "author": "Marcílio Cabral",
     "directories": {
-      "output": "release"
+      "output": "../electron/dist"
     },
     "files": [
       "dist/porto-cabral-frontend/**/*",
       "main.js",
       "package.json"
     ],
+    "extraResources": [
+      {
+        "from": "../electron/resources/backend.jar",
+        "to": "app.jar"
+      },
+      {
+        "from": "../electron/resources/jre-min/",
+        "to": "jre-min/"
+      }
+    ],
     "win": {
       "target": "nsis",
-      "icon": "src/assets/logoPC.ico"
+      "icon": "src/assets/logoPC.ico",
+      "publisherName": "Marcílio Cabral",
+      "legalTrademarks": "© 2026 Marcílio Cabral. Todos os direitos reservados."
     },
     "nsis": {
       "oneClick": false,

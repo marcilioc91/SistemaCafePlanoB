@@ -49,7 +49,7 @@ interface DadosConfirmacao {
   templateUrl: './venda-confirmacao-dialog.html',
   styleUrl: './vendas.css',
 })
-export class VendaConfirmacaoDialog {
+export class VendaConfirmacaoDialog implements OnInit {
   colunas = ['produto', 'quantidade', 'subtotal', 'acoes'];
   formaPagamento = '';
   valorPago: number;
@@ -69,8 +69,17 @@ export class VendaConfirmacaoDialog {
   ) {
     this.valorPago = this.calcularValorNoDialogo();
   }
+  ngOnInit() {
+    this.atualizarValores();
+  }
+  
+  atualizarValores() {
+    const novoTotal = this.calcularValorNoDialogo();
+    this.data.total = novoTotal;
+    this.valorPago = novoTotal;
+  }
   calcularValorNoDialogo(): number {
-    return this.data.itens.reduce((acc, i) => acc + i.produto.preco * i.quantidade, 0);
+    return this.data.itens.reduce((acc, i) => acc + i.produto.preco * (i.quantidade || 0), 0);
   }
 
   confirmar() {
@@ -82,17 +91,17 @@ export class VendaConfirmacaoDialog {
 
   remover(produtoId: number) {
 
-    // const index = this.data.itens.findIndex(i => i.produto.id === produtoId);
-    // if (index !== -1) {
-      // this.data.itens.splice(index, 1);
-      this.data.itens = this.data.itens.filter(i => i.produto.id !== produtoId);
-    // }
-
-    this.valorPago = this.calcularValorNoDialogo();
+    this.data.itens = this.data.itens.filter(i => i.produto.id !== produtoId);
 
     if (this.data.itens.length === 0) {
       this.dialogRef.close(null);
     }
+
+    this.atualizarValores();
+  }
+
+  onQuantidadeChange() {
+    this.atualizarValores();
   }
 }
 
@@ -180,7 +189,7 @@ export class Vendas implements OnInit {
     } else {
       this.carrinho = [...this.carrinho, { produto, quantidade: 1 }];
     }
-    this.snackBar.open('Produto adicionado ao carrinho.', 'Fechar', { duration: 3000 });
+    this.snackBar.open('"' + produto.nome + '" adicionado ao carrinho.', 'Fechar', { duration: 3000 });
   }
 
   total(): number {
@@ -243,5 +252,11 @@ export class Vendas implements OnInit {
 
   quantidadeTotalNoCarrinho(): number {
     return this.carrinho.reduce((acc, item) => acc + item.quantidade, 0);
+  }
+  
+  getEstoqueDisponivel(produto: Produto): number {
+    const itemNoCarrinho = this.carrinho.find(i => i.produto.id === produto.id);
+    const quantidadeNoCarrinho = itemNoCarrinho ? itemNoCarrinho.quantidade : 0;
+    return produto.estoque - quantidadeNoCarrinho;
   }
 }

@@ -78,7 +78,7 @@
 .home-card:hover {
   transform: translateY(-6px) scale(1.02);
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
-  border: 2px solid hsl(288, 100%, 45%);
+  border: 2px solid #e28a6c;
   box-shadow: 0 4px 14px rgba(25, 118, 210, 0.2);
 }
 
