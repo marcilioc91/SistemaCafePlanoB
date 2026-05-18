@@ -51,7 +51,6 @@
     "appId": "com.sistemaportocabral.app",
     "productName": "Porto Cabral",
     "copyright": "© 2026 Marcílio Cabral. Todos os direitos reservados.",
-    "author": "Marcílio Cabral",
     "directories": {
       "output": "../electron/dist"
     },
@@ -73,7 +72,6 @@
     "win": {
       "target": "nsis",
       "icon": "src/assets/logoPC.ico",
-      "publisherName": "Marcílio Cabral",
       "legalTrademarks": "© 2026 Marcílio Cabral. Todos os direitos reservados."
     },
     "nsis": {
